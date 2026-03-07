@@ -392,7 +392,7 @@
   .item-card {
     background: var(--surface); border-radius: var(--radius-sm); padding: 11px 12px 11px 14px;
     box-shadow: var(--shadow); display: flex; align-items: center; gap: 10px;
-    border: 1.5px solid transparent; transition: all .2s; cursor: pointer; user-select: none;
+    border: 1.5px solid transparent; transition: all .2s; user-select: none;
   }
   .item-card.needed { border-color: var(--accent-bd); background: var(--accent-bg); }
   .item-card.bought { opacity: .5; }
@@ -400,11 +400,14 @@
   .item-card.carried { border-color: var(--yellow); border-style: dashed; }
 
   .status-dot {
-    width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+    width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
     border: 2px solid var(--border); background: var(--surface);
-    display: flex; align-items: center; justify-content: center; font-size: 11px;
-    transition: all .2s;
+    display: flex; align-items: center; justify-content: center; font-size: 12px;
+    transition: all .2s; cursor: pointer;
+    /* Larger tap target */
+    padding: 6px; margin: -6px; box-sizing: content-box;
   }
+  .status-dot:active { transform: scale(.88); }
   .item-card.needed .status-dot { background: var(--accent); border-color: var(--accent); color: #fff; }
   .item-card.bought .status-dot { background: var(--green); border-color: var(--green); color: #fff; }
 
@@ -1489,10 +1492,10 @@ function renderStock() {
 
   list.innerHTML = h;
 
-  list.querySelectorAll('.item-card').forEach(card => {
-    card.addEventListener('click', e => {
-      if(e.target.closest('.qty-btn')||e.target.closest('.edit-btn')) return;
-      toggleNeeded(card.dataset.id);
+  list.querySelectorAll('.status-dot').forEach(dot => {
+    dot.addEventListener('click', e => {
+      e.stopPropagation();
+      toggleNeeded(dot.closest('.item-card').dataset.id);
     });
   });
   list.querySelectorAll('.qty-btn').forEach(btn => btn.addEventListener('click', async e => {
