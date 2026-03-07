@@ -287,12 +287,10 @@
     background: var(--surface);
     border-top: 1px solid var(--border);
     display: flex;
-    align-items: flex-start;
+    align-items: stretch;
     flex-shrink: 0;
     z-index: 20;
-    /* Extend background into home indicator area */
     padding-bottom: env(safe-area-inset-bottom, 0px);
-    /* Height of buttons + home indicator space */
     min-height: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px));
     box-shadow: 0 -2px 12px rgba(90,40,10,.08);
     transition: background .3s, border-color .3s;
@@ -301,7 +299,8 @@
     flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
     gap: 3px; border: none; background: none; cursor: pointer; color: var(--text3);
     font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 600;
-    letter-spacing: .3px; transition: color .18s; padding: 8px 0; position: relative;
+    letter-spacing: .3px; transition: color .18s; padding: 10px 0 6px; position: relative;
+    height: var(--nav-h);
   }
   .nav-btn .nav-icon { font-size: 22px; line-height: 1; transition: transform .2s; }
   .nav-btn.active { color: var(--accent); }
@@ -530,7 +529,7 @@
   /* ═══════════════════════════════════════════
      TOAST
   ═══════════════════════════════════════════ */
-  .toast { position: fixed; bottom: calc(var(--nav-h) + 12px); left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--bg); padding: 10px 20px; border-radius: 50px; font-size: 13px; font-weight: 500; z-index: 200; opacity: 0; transition: transform .3s, opacity .3s; white-space: nowrap; max-width: calc(100vw - 32px); text-align: center; pointer-events: none; }
+  .toast { position: fixed; bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 12px); left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--bg); padding: 10px 20px; border-radius: 50px; font-size: 13px; font-weight: 500; z-index: 200; opacity: 0; transition: transform .3s, opacity .3s; white-space: nowrap; max-width: calc(100vw - 32px); text-align: center; pointer-events: none; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   /* ═══════════════════════════════════════════
@@ -553,7 +552,7 @@
   ═══════════════════════════════════════════ */
   .fab {
     position: fixed;
-    bottom: calc(var(--nav-h) + 16px);
+    bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 16px);
     right: 20px;
     width: 52px; height: 52px;
     border-radius: 50%;
