@@ -72,6 +72,137 @@
     --shadow-lg: 0 6px 28px rgba(0,0,0,.40);
   }
 
+  [data-theme="forest"] {
+    --bg:        #f2f7f2;
+    --bg2:       #e4efe4;
+    --bg3:       #d2e4d2;
+    --surface:   #ffffff;
+    --surface2:  #edf6ed;
+    --border:    #c0d8c0;
+    --accent:    #2e7d52;
+    --accent2:   #3a9c66;
+    --accent-bg: #e8f5ee;
+    --accent-bd: #a8d8bc;
+    --text:      #1a3a28;
+    --text2:     #2e5c40;
+    --text3:     #6a9c7a;
+    --green:     #2e7d52;
+    --green-bg:  #d4edda;
+    --red:       #c0392b;
+    --red-bg:    #fde8e6;
+    --yellow:    #a07820;
+    --yellow-bg: #fef9e7;
+    --header-bg: #2e7d52;
+    --header-fg: #ffffff;
+    --shadow:    0 2px 12px rgba(20,60,30,.10);
+    --shadow-lg: 0 6px 28px rgba(20,60,30,.16);
+  }
+
+  [data-theme="ocean"] {
+    --bg:        #f0f6fb;
+    --bg2:       #e2eef7;
+    --bg3:       #cfe2f0;
+    --surface:   #ffffff;
+    --surface2:  #eaf4fb;
+    --border:    #b8d4ea;
+    --accent:    #1a6fa8;
+    --accent2:   #2484c4;
+    --accent-bg: #e6f2fb;
+    --accent-bd: #90c4e4;
+    --text:      #0d2c42;
+    --text2:     #1a4a6e;
+    --text3:     #5a88aa;
+    --green:     #1e8c5e;
+    --green-bg:  #d4edda;
+    --red:       #c0392b;
+    --red-bg:    #fde8e6;
+    --yellow:    #9a7010;
+    --yellow-bg: #fef9e7;
+    --header-bg: #1a6fa8;
+    --header-fg: #ffffff;
+    --shadow:    0 2px 12px rgba(10,40,70,.10);
+    --shadow-lg: 0 6px 28px rgba(10,40,70,.16);
+  }
+
+  [data-theme="berry"] {
+    --bg:        #fdf4f8;
+    --bg2:       #f8e8f2;
+    --bg3:       #f0d4e8;
+    --surface:   #ffffff;
+    --surface2:  #fceef6;
+    --border:    #e0b8d4;
+    --accent:    #9c2870;
+    --accent2:   #c03888;
+    --accent-bg: #fce8f4;
+    --accent-bd: #e0a0cc;
+    --text:      #3a0a28;
+    --text2:     #6e1a50;
+    --text3:     #a86090;
+    --green:     #4a7c59;
+    --green-bg:  #d4edda;
+    --red:       #c0392b;
+    --red-bg:    #fde8e6;
+    --yellow:    #a07820;
+    --yellow-bg: #fef9e7;
+    --header-bg: #9c2870;
+    --header-fg: #ffffff;
+    --shadow:    0 2px 12px rgba(80,10,50,.10);
+    --shadow-lg: 0 6px 28px rgba(80,10,50,.16);
+  }
+
+  /* warm = default :root, explicit alias so applyTheme('warm') works */
+  [data-theme="warm"] {
+    --bg:        #fdf6ec;
+    --bg2:       #f5ead8;
+    --bg3:       #ede0c8;
+    --surface:   #ffffff;
+    --surface2:  #fdf0e0;
+    --border:    #e8d4b8;
+    --accent:    #c4622d;
+    --accent2:   #e07840;
+    --accent-bg: #fceee3;
+    --accent-bd: #f5c4a0;
+    --text:      #3a2010;
+    --text2:     #6b4226;
+    --text3:     #9e6c4a;
+    --green:     #4a7c59;
+    --green-bg:  #d4edda;
+    --red:       #c0392b;
+    --red-bg:    #fde8e6;
+    --yellow:    #b8860b;
+    --yellow-bg: #fef9e7;
+    --header-bg: #c4622d;
+    --header-fg: #ffffff;
+    --shadow:    0 2px 12px rgba(90,40,10,.10);
+    --shadow-lg: 0 6px 28px rgba(90,40,10,.16);
+  }
+
+  [data-theme="slate"] {
+    --bg:        #f4f6f8;
+    --bg2:       #eaedf0;
+    --bg3:       #dce0e6;
+    --surface:   #ffffff;
+    --surface2:  #f0f3f6;
+    --border:    #c8d0da;
+    --accent:    #3d5a80;
+    --accent2:   #4e72a0;
+    --accent-bg: #e8edf5;
+    --accent-bd: #a0b4cc;
+    --text:      #1a2535;
+    --text2:     #2c3e55;
+    --text3:     #6a7f95;
+    --green:     #2e7d52;
+    --green-bg:  #d4edda;
+    --red:       #c0392b;
+    --red-bg:    #fde8e6;
+    --yellow:    #9a7010;
+    --yellow-bg: #fef9e7;
+    --header-bg: #3d5a80;
+    --header-fg: #ffffff;
+    --shadow:    0 2px 12px rgba(20,35,55,.10);
+    --shadow-lg: 0 6px 28px rgba(20,35,55,.16);
+  }
+
   /* ═══════════════════════════════════════════
      BASE
   ═══════════════════════════════════════════ */
@@ -297,10 +428,10 @@
   .settings-row-sub { font-size: 12px; color: var(--text3); margin-top: 1px; }
   .settings-row-val { font-size: 13px; color: var(--text3); }
 
-  .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 12px; }
-  .theme-opt { border: 2px solid var(--border); border-radius: var(--radius-sm); padding: 12px; cursor: pointer; transition: all .2s; text-align: center; }
+  .theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 12px; }
+  .theme-opt { border: 2px solid var(--border); border-radius: var(--radius-sm); padding: 10px 8px; cursor: pointer; transition: all .2s; text-align: center; }
   .theme-opt.active { border-color: var(--accent); background: var(--accent-bg); }
-  .theme-swatch { width: 32px; height: 32px; border-radius: 50%; margin: 0 auto 6px; }
+  .theme-swatch { width: 32px; height: 32px; border-radius: 50%; margin: 0 auto 6px; border: 2px solid var(--border); }
   .theme-name { font-size: 12px; font-weight: 600; color: var(--text2); }
 
   /* sync status */
@@ -358,9 +489,152 @@
   @keyframes bounce { 0%,80%,100%{transform:scale(.7)} 40%{transform:scale(1); background:rgba(255,255,255,.9)} }
   @keyframes pop { 0%{transform:scale(.5);opacity:0} 100%{transform:scale(1);opacity:1} }
 
-  @media(min-width:541px) {
-    #app { border-left: 1px solid var(--border); border-right: 1px solid var(--border); box-shadow: var(--shadow-lg); }
-    body { background: var(--bg2); }
+  /* ═══════════════════════════════════════════
+     FAB — Floating Add Button
+  ═══════════════════════════════════════════ */
+  .fab {
+    position: fixed;
+    bottom: calc(var(--nav-h) + 16px);
+    right: 20px;
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    font-size: 26px;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,.20);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 50;
+    transition: transform .18s, box-shadow .18s, background .3s;
+    line-height: 1;
+  }
+  .fab:active { transform: scale(.93); box-shadow: 0 2px 8px rgba(0,0,0,.18); }
+  .fab:hover { transform: scale(1.06); box-shadow: 0 6px 20px rgba(0,0,0,.25); }
+
+  /* ═══════════════════════════════════════════
+     DESKTOP RESPONSIVE LAYOUT
+  ═══════════════════════════════════════════ */
+  @media(min-width:768px) {
+    html, body { overflow: auto; height: 100%; }
+
+    body {
+      background: var(--bg2);
+      display: grid;
+      grid-template-rows: 1fr;
+      min-height: 100vh;
+    }
+
+    #app {
+      max-width: 100%;
+      height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      grid-template-columns: 240px 1fr;
+      grid-template-areas:
+        "sidebar header"
+        "sidebar main";
+    }
+
+    /* Header spans only the main content column on desktop */
+    header {
+      grid-area: header;
+      padding: 0 24px;
+    }
+    header .date-nav { padding: 8px 0 14px; }
+
+    /* Sidebar replaces bottom nav on desktop */
+    .bottom-nav {
+      grid-area: sidebar;
+      flex-direction: column;
+      height: 100%;
+      width: 240px;
+      border-top: none;
+      border-right: 1px solid var(--border);
+      padding-bottom: 0;
+      padding-top: 0;
+      box-shadow: 2px 0 12px rgba(90,40,10,.06);
+      justify-content: flex-start;
+      gap: 0;
+    }
+
+    /* Sidebar logo/title area */
+    .bottom-nav::before {
+      content: '';
+      display: block;
+      height: 20px;
+    }
+
+    .nav-btn {
+      flex-direction: row;
+      justify-content: flex-start;
+      padding: 14px 20px;
+      font-size: 13px;
+      gap: 12px;
+      border-radius: 10px;
+      margin: 2px 12px;
+      width: calc(100% - 24px);
+      flex: 0 0 auto;
+    }
+    .nav-btn .nav-icon { font-size: 20px; }
+    .nav-btn.active { background: var(--accent-bg); }
+    .nav-btn.active .nav-icon { transform: none; }
+    .nav-badge { right: 12px; top: 50%; transform: translateY(-50%); }
+
+    /* Sidebar branding */
+    .nav-sidebar-brand {
+      padding: 20px 20px 10px;
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      display: flex !important;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    /* Content area */
+    .content-area {
+      grid-area: main;
+      overflow: hidden;
+    }
+
+    /* FAB repositioned on desktop */
+    .fab {
+      right: 32px;
+      bottom: 32px;
+    }
+
+    /* Wider cards layout */
+    .items-list { padding: 0 20px; }
+    .shop-section { margin: 0 20px 12px; }
+    .shop-hero { margin: 16px 20px; }
+    .shop-loc-header { padding: 12px 20px 4px; }
+    .history-card { margin: 6px 20px; }
+    .settings-section { margin: 0 20px 16px; }
+
+    /* 2-column stock grid on wide screens */
+    @media(min-width:1100px) {
+      #app { grid-template-columns: 260px 1fr; }
+      .items-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 20px; }
+      .section-header { padding: 14px 20px 6px; }
+    }
+
+    /* Modal centers on desktop */
+    .modal-overlay { align-items: center; }
+    .modal {
+      border-radius: 22px;
+      max-width: 500px;
+      max-height: 85vh;
+      transform: scale(.95) translateY(0);
+    }
+    .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+
+    /* Scrollbar visible but styled on desktop */
+    .scrollable::-webkit-scrollbar { display: block; width: 6px; }
+    .scrollable::-webkit-scrollbar-track { background: transparent; }
+    .scrollable::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   }
   </style>
 </head>
@@ -402,7 +676,6 @@
       </div>
       <div class="header-actions">
         <div class="sync-dot" id="syncDot" title="Sync status"></div>
-        <button class="icon-btn" id="addItemBtn">＋</button>
       </div>
     </div>
     <div class="date-nav" id="dateNavWrap">
@@ -542,8 +815,21 @@
     </div>
   </div>
 
-  <!-- BOTTOM NAV -->
+  <!-- FLOATING ADD BUTTON -->
+  <button class="fab" id="addItemBtn" title="Add item">＋</button>
+
+  <!-- BOTTOM NAV / SIDEBAR -->
   <nav class="bottom-nav">
+    <div class="nav-sidebar-brand" style="display:none">
+      <svg width="22" height="22" viewBox="0 0 34 34" fill="none">
+        <rect width="34" height="34" rx="8" fill="var(--accent)" opacity=".15"/>
+        <rect x="7" y="5" width="20" height="26" rx="3" fill="var(--accent)" opacity=".8"/>
+        <rect x="7" y="5" width="20" height="10" rx="3" fill="var(--accent)"/>
+        <rect x="23" y="7" width="2.5" height="5" rx="1.25" fill="white" opacity=".8"/>
+        <rect x="23" y="17" width="2.5" height="5" rx="1.25" fill="white" opacity=".8"/>
+      </svg>
+      Connie's
+    </div>
     <button class="nav-btn active" data-tab="stock">
       <span class="nav-icon">📦</span>
       Stock
@@ -1170,18 +1456,37 @@ function renderHistory() {
 }
 
 // ── SETTINGS ──────────────────────────────────────────────────────────
+function applyTheme(id) {
+  document.documentElement.setAttribute('data-theme', id);
+  // Update meta theme-color to match accent
+  const accentMap = {
+    warm:'#c4622d', dark:'#e07840', forest:'#2e7d52',
+    ocean:'#1a6fa8', berry:'#9c2870', slate:'#3d5a80'
+  };
+  document.getElementById('themeMetaColor').setAttribute('content', accentMap[id]||'#c4622d');
+}
+
 function renderThemeGrid() {
   const themes = [
-    {id:'warm', name:'Warm & Cosy', swatch:'#c4622d'},
+    {id:'warm',   name:'Warm & Cosy',    swatch:'#c4622d', sub:'Cream & terracotta'},
+    {id:'dark',   name:'Dark Mode',       swatch:'#1a120a', sub:'Easy on the eyes'},
+    {id:'forest', name:'Forest',          swatch:'#2e7d52', sub:'Fresh greens'},
+    {id:'ocean',  name:'Ocean',           swatch:'#1a6fa8', sub:'Cool blues'},
+    {id:'berry',  name:'Berry',           swatch:'#9c2870', sub:'Deep pinks'},
+    {id:'slate',  name:'Slate',           swatch:'#3d5a80', sub:'Muted blues'},
   ];
   const grid = document.getElementById('themeGrid');
   grid.innerHTML = themes.map(t=>`
     <div class="theme-opt ${currentTheme===t.id?'active':''}" data-tid="${t.id}">
-      <div class="theme-swatch" style="background:${t.swatch}"></div>
+      <div class="theme-swatch" style="background:${t.swatch};${t.id==='dark'?'border:1px solid #444':''}"></div>
       <div class="theme-name">${t.name}</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:2px">${t.sub}</div>
     </div>`).join('');
   grid.querySelectorAll('.theme-opt').forEach(opt=>opt.addEventListener('click',()=>{
-    currentTheme=opt.dataset.tid; localStorage.setItem('cm_theme',currentTheme); renderThemeGrid();
+    currentTheme=opt.dataset.tid;
+    localStorage.setItem('cm_theme',currentTheme);
+    applyTheme(currentTheme);
+    renderThemeGrid();
   }));
 }
 
@@ -1348,6 +1653,9 @@ if(!navigator.onLine) setSyncState('offline');
 if('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch(()=>{});
 }
+
+// Apply saved theme immediately on load
+applyTheme(currentTheme);
 </script>
 </body>
 </html>
