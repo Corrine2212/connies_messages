@@ -636,22 +636,26 @@
     .scrollable::-webkit-scrollbar-track { background: transparent; }
     .scrollable::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   }
-  /* Google sign-in button */
-  .google-btn {
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    width: 100%; padding: 13px 16px; margin: 12px 0 4px;
-    background: #fff; border: 1.5px solid var(--border);
-    border-radius: 50px; cursor: pointer;
-    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
-    color: #3c4043; transition: all .18s; box-shadow: var(--shadow);
+  /* Auth form */
+  .auth-form { padding: 4px 0 8px; display: flex; flex-direction: column; gap: 10px; }
+  .auth-form input {
+    width: 100%; padding: 11px 14px; border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border); background: var(--surface);
+    font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text);
+    outline: none; transition: border-color .18s;
   }
-  .google-btn:hover { box-shadow: var(--shadow-lg); border-color: #aaa; }
-  .google-btn:disabled { opacity: .6; cursor: default; }
-  .google-btn svg { flex-shrink: 0; }
+  .auth-form input:focus { border-color: var(--accent-bd); }
+  .auth-form input::placeholder { color: var(--text3); }
+  .auth-row { display: flex; gap: 8px; }
+  .auth-row .btn-primary { font-size: 13px; padding: 11px; }
+  .auth-row .btn-secondary { font-size: 13px; padding: 11px 14px; white-space: nowrap; }
+  .auth-status { font-size: 12px; color: var(--text3); text-align: center; padding: 2px 0; }
+  .auth-error { font-size: 12px; color: var(--red); text-align: center; display: none; }
+  .auth-error.show { display: block; }
   .sign-out-btn {
     background: none; border: none; color: var(--text3); font-size: 12px;
     cursor: pointer; padding: 4px 0; font-family: 'DM Sans', sans-serif;
-    text-decoration: underline;
+    text-decoration: underline; display: none;
   }
 
   /* Update banner */
@@ -783,13 +787,22 @@
               </div>
               <div class="sync-dot" id="syncDot2"></div>
             </div>
-            <div class="settings-row" style="flex-direction:column;align-items:stretch;gap:6px">
-              <button class="google-btn" id="googleSignInBtn">
-                <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/></svg>
-                Sign in with Google to sync devices
-              </button>
-              <div style="text-align:center">
-                <button class="sign-out-btn" id="signOutBtn" style="display:none">Sign out</button>
+            <div class="settings-row" style="flex-direction:column;align-items:stretch;gap:6px;padding:12px 16px">
+              <div id="authSignedOut">
+                <div class="auth-form">
+                  <input type="email" id="authEmail" placeholder="Email address" autocomplete="email" inputmode="email"/>
+                  <input type="password" id="authPassword" placeholder="Password" autocomplete="current-password"/>
+                  <div id="authError" class="auth-error"></div>
+                  <div class="auth-row">
+                    <button class="btn-primary" id="signInBtn">Sign in</button>
+                    <button class="btn-secondary" id="registerBtn">Register</button>
+                  </div>
+                  <div class="auth-status">Sign in to sync across all your devices</div>
+                </div>
+              </div>
+              <div id="authSignedIn" style="display:none;text-align:center">
+                <div style="font-size:13px;color:var(--text2);margin-bottom:8px" id="signedInEmail"></div>
+                <button class="sign-out-btn" id="signOutBtn" style="display:inline">Sign out</button>
               </div>
             </div>
             <div class="settings-row">
@@ -965,8 +978,7 @@ import {
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 import {
   getAuth, signInAnonymously, onAuthStateChanged,
-  GoogleAuthProvider, signInWithPopup, signInWithRedirect,
-  getRedirectResult, linkWithPopup, linkWithRedirect
+  createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
 // ── FIREBASE CONFIG ───────────────────────────────────────────────────
@@ -1537,11 +1549,7 @@ function switchTab(tab) {
   if(tab==='history') renderHistory();
   if(tab==='settings'){
     renderThemeGrid();
-    const u = auth.currentUser;
-    const isGoogle = u?.providerData?.some(p => p.providerId === 'google.com');
-    document.getElementById('settingsUserInfo').textContent = isGoogle
-      ? `${u.displayName || u.email} · ${items.length} items`
-      : `Not synced · tap Sign in with Google below`;
+    updateAuthUI(auth.currentUser);
     document.getElementById('totalItemsCount').textContent = items.length;
   }
 }
@@ -1665,29 +1673,109 @@ document.getElementById('dateMain').addEventListener('click', e => {
 });
 
 // ── ONLINE/OFFLINE ────────────────────────────────────────────────────
-// ── GOOGLE SIGN-IN LISTENERS ─────────────────────────────────────────
-document.getElementById('googleSignInBtn').addEventListener('click', async () => {
-  const btn = document.getElementById('googleSignInBtn');
-  btn.disabled = true;
-  btn.textContent = 'Signing in…';
+window.addEventListener('online', ()=>{ online=true; setSyncState('ok'); toast('Back online ✓'); });
+window.addEventListener('offline', ()=>{ online=false; setSyncState('offline'); toast("You're offline — changes saved locally"); });
 
+// ── AUTH HELPERS ──────────────────────────────────────────────────────
+function authErrorMsg(code) {
+  const msgs = {
+    'auth/invalid-email':          'Please enter a valid email address.',
+    'auth/user-not-found':         'No account found with that email.',
+    'auth/wrong-password':         'Incorrect password.',
+    'auth/invalid-credential':     'Incorrect email or password.',
+    'auth/email-already-in-use':   'An account with that email already exists.',
+    'auth/weak-password':          'Password must be at least 6 characters.',
+    'auth/too-many-requests':      'Too many attempts. Please try again later.',
+    'auth/network-request-failed': 'Network error. Check your connection.',
+  };
+  return msgs[code] || 'Something went wrong. Please try again.';
+}
+
+function showAuthError(msg) {
+  const el = document.getElementById('authError');
+  el.textContent = msg; el.classList.add('show');
+}
+function clearAuthError() {
+  document.getElementById('authError').classList.remove('show');
+}
+
+function updateAuthUI(user) {
+  const isEmail = user?.providerData?.some(p => p.providerId === 'password');
+  document.getElementById('authSignedOut').style.display = isEmail ? 'none' : 'block';
+  document.getElementById('authSignedIn').style.display  = isEmail ? 'block' : 'none';
+  if (isEmail) {
+    document.getElementById('signedInEmail').textContent = 'Signed in as ' + user.email;
+    document.getElementById('settingsUserInfo').textContent = user.email + ' · ' + items.length + ' items';
+  } else {
+    document.getElementById('settingsUserInfo').textContent = 'Not synced · sign in below to sync devices';
+  }
+}
+
+// ── AUTH + INIT ───────────────────────────────────────────────────────
+async function handleSignedIn(user) {
+  uid = user.uid;
+  setSyncState('syncing');
+  updateAuthUI(user);
+  await seedIfEmpty();
+  subscribeItems();
+  subscribeDays();
+  viewDate = todayKey();
+  renderDateHeader();
+  renderThemeGrid();
+  setTimeout(()=>{
+    const ls = document.getElementById('loadingScreen');
+    if (ls) { ls.classList.add('fade'); setTimeout(()=>ls.remove(), 500); }
+  }, 600);
+}
+
+onAuthStateChanged(auth, async user => {
+  if (user) {
+    await handleSignedIn(user);
+  } else {
+    try {
+      await signInAnonymously(auth);
+    } catch(e) {
+      setSyncState('error');
+      const ls = document.getElementById('loadingScreen');
+      if (ls) { ls.classList.add('fade'); setTimeout(()=>ls.remove(), 500); }
+    }
+  }
+});
+
+// ── EMAIL/PASSWORD LISTENERS ──────────────────────────────────────────
+document.getElementById('signInBtn').addEventListener('click', async () => {
+  const email    = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  clearAuthError();
+  if (!email || !password) { showAuthError('Please enter your email and password.'); return; }
+  const btn = document.getElementById('signInBtn');
+  btn.textContent = '…'; btn.disabled = true;
   try {
-    if (isMobile) {
-      // Redirect flow — page will reload after Google auth
-      await signInWithRedirect(auth, provider);
-    } else {
-      // Popup flow for desktop
-      const result = await signInWithPopup(auth, provider);
-      // If currently anonymous, migrate data by re-subscribing under new uid
-      // (Firestore data under old anon uid stays, new uid gets fresh or existing data)
-      toast(`Signed in as ${result.user.displayName || result.user.email} ✓`);
-    }
+    await signInWithEmailAndPassword(auth, email, password);
+    document.getElementById('authPassword').value = '';
+    toast('Signed in ✓');
   } catch(e) {
-    btn.disabled = false;
-    btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/></svg>Sign in with Google to sync devices`;
-    if (e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') {
-      toast('Sign-in failed. Please try again.');
-    }
+    showAuthError(authErrorMsg(e.code));
+  } finally {
+    btn.textContent = 'Sign in'; btn.disabled = false;
+  }
+});
+
+document.getElementById('registerBtn').addEventListener('click', async () => {
+  const email    = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  clearAuthError();
+  if (!email || !password) { showAuthError('Please enter an email and password.'); return; }
+  const btn = document.getElementById('registerBtn');
+  btn.textContent = '…'; btn.disabled = true;
+  try {
+    await createUserWithEmailAndPassword(auth, email, password);
+    document.getElementById('authPassword').value = '';
+    toast('Account created ✓');
+  } catch(e) {
+    showAuthError(authErrorMsg(e.code));
+  } finally {
+    btn.textContent = 'Register'; btn.disabled = false;
   }
 });
 
@@ -1696,101 +1784,9 @@ document.getElementById('signOutBtn').addEventListener('click', async () => {
     try {
       if (unsubItems) unsubItems();
       if (unsubDays) unsubDays();
-      await auth.signOut();
+      await signOut(auth);
       toast('Signed out');
-    } catch(e) {
-      toast('Sign out failed');
-    }
-  }
-});
-
-window.addEventListener('online', ()=>{ online=true; setSyncState('ok'); toast('Back online ✓'); });
-window.addEventListener('offline', ()=>{ online=false; setSyncState('offline'); toast('You\'re offline — changes saved locally'); });
-
-// ── AUTH + INIT ───────────────────────────────────────────────────────
-const provider = new GoogleAuthProvider();
-
-// Detect mobile for redirect vs popup
-const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-
-async function signInWithGoogle() {
-  try {
-    if (isMobile) {
-      await signInWithRedirect(auth, provider);
-    } else {
-      await signInWithPopup(auth, provider);
-    }
-  } catch(e) {
-    console.warn('Google sign-in error:', e.code);
-    toast('Sign-in failed: ' + (e.code || e.message));
-  }
-}
-
-async function handleSignedIn(user) {
-  uid = user.uid;
-  setSyncState('syncing');
-
-  // Show which account is signed in
-  const isGoogle = user.providerData?.some(p => p.providerId === 'google.com');
-  const name = user.displayName || user.email || 'Signed in';
-  document.getElementById('settingsUserInfo').textContent =
-    isGoogle ? `${name} · ${items.length} items` : 'Anonymous · tap Sign in with Google to sync';
-
-  // Update sign-in / sign-out button state
-  const btn = document.getElementById('googleSignInBtn');
-  const soBtn = document.getElementById('signOutBtn');
-  if (btn && soBtn) {
-    if (isGoogle) {
-      btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/></svg>✓ Signed in as ${user.displayName || user.email}`;
-      btn.disabled = true;
-      btn.style.opacity = '0.75';
-      soBtn.style.display = 'inline';
-    } else {
-      btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/></svg>Sign in with Google to sync devices`;
-      btn.disabled = false;
-      btn.style.opacity = '1';
-      soBtn.style.display = 'none';
-    }
-  }
-
-  await seedIfEmpty();
-  subscribeItems();
-  subscribeDays();
-  viewDate = todayKey();
-  renderDateHeader();
-  renderThemeGrid();
-
-  // Hide loading screen
-  setTimeout(()=>{
-    const ls = document.getElementById('loadingScreen');
-    if (ls) { ls.classList.add('fade'); setTimeout(()=>ls.remove(), 500); }
-  }, 600);
-}
-
-// Handle redirect result first (for mobile after Google redirects back)
-try {
-  const result = await getRedirectResult(auth);
-  if (result?.user) {
-    // Redirect sign-in succeeded — onAuthStateChanged will fire
-  }
-} catch(e) {
-  console.warn('Redirect result error:', e.code);
-}
-
-onAuthStateChanged(auth, async user => {
-  if (user) {
-    await handleSignedIn(user);
-  } else {
-    // Sign in anonymously first so app works immediately
-    // User can upgrade to Google in Settings
-    try {
-      await signInAnonymously(auth);
-    } catch(e) {
-      setSyncState('error');
-      toast('Sign-in failed — working offline');
-      const ls = document.getElementById('loadingScreen');
-      if (ls) { ls.classList.add('fade'); setTimeout(()=>ls.remove(), 500); }
-    }
+    } catch(e) { toast('Sign out failed'); }
   }
 });
 
