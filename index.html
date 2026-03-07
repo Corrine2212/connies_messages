@@ -2,16 +2,6 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <script>
-    // Nuke all old service workers and caches on every page load
-    // This ensures deployments are always picked up without hard refresh
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(regs => {
-        regs.forEach(r => r.unregister());
-      });
-    }
-    caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
-  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <meta name="theme-color" content="#c4622d" id="themeMetaColor"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
@@ -663,7 +653,7 @@
 <!-- LOADING SCREEN -->
 <div class="update-banner" id="updateBanner">
   <span>✨ New version available</span>
-  <button onclick="window.location.reload()">Refresh</button>
+  <button id="updateBtn">Refresh</button>
 </div>
 
 <div id="loadingScreen">
@@ -1677,24 +1667,50 @@ if(!navigator.onLine) setSyncState('offline');
 // Service worker
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').then(reg => {
-    // Check for updates every time the page gains focus
+    // Poll for updates when page becomes visible (e.g. switching back to app)
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') reg.update();
+    });
+
     reg.addEventListener('updatefound', () => {
       const newWorker = reg.installing;
       newWorker.addEventListener('statechange', () => {
+        // Only show banner if there's already a controller (i.e. not first install)
         if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-          // New version available — show banner
           document.getElementById('updateBanner').classList.add('show');
         }
       });
     });
   }).catch(() => {});
 
-  // When the SW activates a new version, reload automatically if no unsaved work
+  // When SW activates (after user taps Refresh), reload once cleanly
   let refreshing = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
     if (!refreshing) { refreshing = true; window.location.reload(); }
   });
 }
+
+// Refresh button: tell waiting SW to activate → controllerchange fires → single clean reload
+document.getElementById('updateBtn').addEventListener('click', () => {
+  navigator.serviceWorker.getRegistration().then(reg => {
+    if (reg && reg.waiting) {
+      reg.waiting.postMessage('skipWaiting');
+    } else {
+      window.location.reload();
+    }
+  });
+});
+
+// Refresh button tells the waiting SW to activate, then page reloads via controllerchange
+document.getElementById('updateBtn').addEventListener('click', () => {
+  navigator.serviceWorker.getRegistration().then(reg => {
+    if (reg && reg.waiting) {
+      reg.waiting.postMessage('skipWaiting');
+    } else {
+      window.location.reload();
+    }
+  });
+});
 
 // Apply saved theme immediately on load
 applyTheme(currentTheme);
