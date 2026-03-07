@@ -516,11 +516,18 @@
      DESKTOP RESPONSIVE LAYOUT
   ═══════════════════════════════════════════ */
   @media(min-width:768px) {
-    html, body { overflow: hidden; height: 100%; background: var(--bg2); }
+    html, body {
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+    }
 
     #app {
       max-width: 100%;
-      width: 100%;
+      width: 100vw;
       height: 100vh;
       display: grid;
       grid-template-rows: auto 1fr;
@@ -529,6 +536,11 @@
         "sidebar header"
         "sidebar main";
       margin: 0;
+      padding: 0;
+      background: var(--bg);
+      gap: 0;
+      column-gap: 0;
+      row-gap: 0;
     }
 
     /* Header — main content column only */
@@ -926,7 +938,11 @@
         </div>
         <div class="form-field">
           <label>Type / Category</label>
-          <input type="text" id="mType" placeholder="e.g. Dairy" autocorrect="off"/>
+          <select id="mType"></select>
+          <div id="newTypeWrap" style="display:none;margin-top:6px">
+            <input type="text" id="newTypeInput" placeholder="New category name…" autocorrect="off"
+              style="width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid var(--accent-bd);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none"/>
+          </div>
         </div>
       </div>
       <div class="form-row">
@@ -1577,13 +1593,26 @@ function getLocations() {
     ...items.map(i=>i.location)])].filter(Boolean).sort();
 }
 
+function getTypes() {
+  return [...new Set(['Bakery','Dairy','Drinks','Dried','Essentials','Fish','Frozen',
+    'Fruit','Household','Ingredient','Meat','Sauce','Seasoning','Snacks','Tins','Toiletries','Veg',
+    ...items.map(i=>i.type)])].filter(Boolean).sort();
+}
+
 function popLocs(selected) {
   const sel = document.getElementById('mLocation');
   const all = getLocations();
   sel.innerHTML = all.map(l=>`<option value="${esc(l)}" ${l===selected?'selected':''}>${esc(l)}</option>`).join('')
     + `<option value="__new__">＋ New location…</option>`;
-  // Hide new-loc input by default
   document.getElementById('newLocWrap').style.display = 'none';
+}
+
+function popTypes(selected) {
+  const sel = document.getElementById('mType');
+  const all = getTypes();
+  sel.innerHTML = all.map(t=>`<option value="${esc(t)}" ${t===selected?'selected':''}>${esc(t)}</option>`).join('')
+    + `<option value="__new__">＋ New category…</option>`;
+  document.getElementById('newTypeWrap').style.display = 'none';
 }
 
 document.getElementById('mLocation').addEventListener('change', e => {
@@ -1597,15 +1626,27 @@ document.getElementById('mLocation').addEventListener('change', e => {
     wrap.style.display = 'none';
   }
 });
+
+document.getElementById('mType').addEventListener('change', e => {
+  const wrap = document.getElementById('newTypeWrap');
+  const inp  = document.getElementById('newTypeInput');
+  if (e.target.value === '__new__') {
+    wrap.style.display = 'block';
+    inp.value = '';
+    setTimeout(() => inp.focus(), 50);
+  } else {
+    wrap.style.display = 'none';
+  }
+});
 function openAdd() {
   editId=null;
   document.getElementById('modalTitle').textContent='Add Item';
-  document.getElementById('mName').value='';document.getElementById('mType').value='';
+  document.getElementById('mName').value='';
   document.getElementById('mMin').value='';document.getElementById('mMax').value='';
   document.getElementById('mQty').value='0';document.getElementById('mStaple').value='No';
   document.getElementById('modalDelete').style.display='none';
   document.getElementById('dupeWarning').classList.remove('show');
-  popLocs(); document.getElementById('newLocWrap').style.display='none'; document.getElementById('itemModal').classList.add('open');
+  popLocs(); popTypes(); document.getElementById('itemModal').classList.add('open');
   setTimeout(()=>document.getElementById('mName').focus(),300);
 }
 function openEdit(id) {
@@ -1618,6 +1659,7 @@ function openEdit(id) {
   document.getElementById('modalDelete').style.display='inline-flex';
   document.getElementById('dupeWarning').classList.remove('show');
   popLocs(it.location||'Cupboard');
+  popTypes(it.type||'Other');
   document.getElementById('itemModal').classList.add('open');
 }
 
@@ -1656,7 +1698,7 @@ document.getElementById('modalSave').addEventListener('click', async () => {
 
   const data = {
     name, location: loc,
-    type: document.getElementById('mType').value.trim()||'Other',
+    type: (()=>{ const v=document.getElementById('mType').value; return v==='__new__' ? (document.getElementById('newTypeInput').value.trim()||'Other') : v; })(),
     min: document.getElementById('mMin').value!==''?Number(document.getElementById('mMin').value):null,
     max: document.getElementById('mMax').value!==''?Number(document.getElementById('mMax').value):null,
     qty: Number(document.getElementById('mQty').value)||0,
