@@ -1,0 +1,12 @@
+{
+  "name": "connies-messages",
+  "version": "1.0.0",
+  "description": "Connie's Messages - Stock Checker App",
+  "private": true,
+  "devDependencies": {
+    "@netlify/plugin-replace-values": "^1.0.0"
+  },
+  "scripts": {
+    "build": "echo 'No build step needed'"
+  }
+}
