@@ -207,10 +207,33 @@
      BASE
   ═══════════════════════════════════════════ */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html { height: 100%; overflow: hidden; background: var(--header-bg); transition: background .3s; }
-  body { height: 100%; overflow: hidden; background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--text); transition: background .3s, color .3s; }
+  html {
+    height: 100%;
+    /* Fill behind the iOS status bar with the header colour */
+    background: var(--header-bg);
+    transition: background .3s;
+  }
+  body {
+    height: 100%;
+    overflow: hidden;
+    /* Transparent so html's header-bg shows through at top */
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    transition: background .3s, color .3s;
+  }
 
-  #app { display: flex; flex-direction: column; height: 100dvh; height: 100vh; width: 100%; position: relative; }
+  #app {
+    display: flex;
+    flex-direction: column;
+    /* Fill full screen including safe areas */
+    height: 100%;
+    min-height: -webkit-fill-available;
+    width: 100%;
+    position: relative;
+    /* Content area gets page bg, but header/nav sit atop html's header-bg */
+    background: var(--bg);
+  }
 
   /* ═══════════════════════════════════════════
      HEADER
@@ -261,14 +284,16 @@
      BOTTOM NAV
   ═══════════════════════════════════════════ */
   .bottom-nav {
-    height: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px));
     background: var(--surface);
     border-top: 1px solid var(--border);
     display: flex;
     align-items: flex-start;
     flex-shrink: 0;
     z-index: 20;
+    /* Extend background into home indicator area */
     padding-bottom: env(safe-area-inset-bottom, 0px);
+    /* Height of buttons + home indicator space */
+    min-height: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px));
     box-shadow: 0 -2px 12px rgba(90,40,10,.08);
     transition: background .3s, border-color .3s;
   }
@@ -550,8 +575,9 @@
      DESKTOP RESPONSIVE LAYOUT
   ═══════════════════════════════════════════ */
   @media(min-width:768px) {
-    html { overflow: hidden; height: 100%; width: 100%; margin: 0; padding: 0; background: var(--header-bg); }
+    html { overflow: hidden; height: 100%; width: 100%; margin: 0; padding: 0; background: var(--bg); }
     body { overflow: hidden; height: 100%; width: 100%; margin: 0; padding: 0; background: var(--bg); }
+    #app { background: var(--bg); height: 100vh; min-height: unset; }
 
     #app {
       max-width: 100%;
