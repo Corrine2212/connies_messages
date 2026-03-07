@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
   <meta name="theme-color" content="#c4622d" id="themeMetaColor"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
-  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="Connie's"/>
   <link rel="manifest" href="manifest.json"/>
   <link rel="apple-touch-icon" href="icon-192.png"/>
@@ -209,7 +209,7 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html, body { height: 100%; overflow: hidden; background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--text); transition: background .3s, color .3s; }
 
-  #app { display: flex; flex-direction: column; height: 100dvh; height: 100vh; max-width: 540px; margin: 0 auto; position: relative; }
+  #app { display: flex; flex-direction: column; height: 100dvh; height: 100vh; width: 100%; position: relative; }
 
   /* ═══════════════════════════════════════════
      HEADER
@@ -218,6 +218,7 @@
     background: var(--header-bg);
     color: var(--header-fg);
     padding: 0 16px;
+    padding-top: env(safe-area-inset-top, 0px);
     flex-shrink: 0;
     z-index: 20;
     box-shadow: var(--shadow);
@@ -303,13 +304,34 @@
   .s-clear { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text3); cursor: pointer; padding: 5px; font-size: 14px; display: none; }
   .search-wrap input:not(:placeholder-shown) ~ .s-clear { display: flex; }
 
-  .filter-row { display: flex; gap: 7px; overflow-x: auto; padding: 8px 16px 10px; flex-shrink: 0; scrollbar-width: none; -webkit-overflow-scrolling: touch; background: var(--bg); }
-  .filter-row::-webkit-scrollbar { display: none; }
+  /* ── FILTER BAR ── */
+  .filter-row {
+    display: flex; gap: 6px; padding: 8px 16px 10px;
+    flex-shrink: 0; background: var(--bg); align-items: center;
+    flex-wrap: nowrap; overflow: hidden;
+  }
+  /* Quick pills — always visible */
   .pill { flex-shrink: 0; padding: 5px 13px; border-radius: 50px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1.5px solid var(--border); background: var(--surface); color: var(--text2); transition: all .18s; white-space: nowrap; }
   .pill.active { background: var(--accent); border-color: var(--accent); color: #fff; }
   .pill.warn-pill { border-color: var(--yellow); color: var(--yellow); }
   .pill.warn-pill.active { background: var(--yellow); color: #fff; }
-  .pill-sep { color: var(--border); font-size: 18px; align-self: center; flex-shrink: 0; }
+  /* Filter dropdowns */
+  .filter-select {
+    flex-shrink: 0; padding: 5px 28px 5px 11px; border-radius: 50px;
+    font-size: 12px; font-weight: 500; cursor: pointer;
+    border: 1.5px solid var(--border); background: var(--surface);
+    color: var(--text2); transition: all .18s; white-space: nowrap;
+    font-family: 'DM Sans', sans-serif; appearance: none; -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23aaa'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center;
+    outline: none;
+  }
+  .filter-select.active {
+    background-color: var(--accent-bg); border-color: var(--accent-bd);
+    color: var(--accent);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23c4622d'/%3E%3C/svg%3E");
+  }
+  .filter-sep { color: var(--border); font-size: 16px; align-self: center; flex-shrink: 0; opacity: .5; }
 
   /* ═══════════════════════════════════════════
      SECTION HEADERS
@@ -564,7 +586,7 @@
       box-shadow: none;
       justify-content: flex-start;
       gap: 0;
-      background: var(--surface);
+      background: var(--bg);
       overflow-y: auto;
     }
 
@@ -622,7 +644,7 @@
     .items-list { padding: 0 24px; }
     .section-header { padding: 14px 24px 6px; }
     .search-bar { padding: 12px 24px 0; background: var(--bg); }
-    .filter-row { padding: 8px 24px 10px; background: var(--bg); }
+    .filter-row { padding: 8px 24px 10px; background: var(--bg); gap: 8px; }
     .shop-section { margin: 0 24px 12px; }
     .shop-hero { margin: 16px 24px; }
     .shop-loc-header { padding: 14px 24px 4px; }
@@ -1335,17 +1357,37 @@ function renderFilters() {
   const locs = [...new Set(items.map(i=>i.location))].filter(Boolean).sort();
   const types = [...new Set(items.map(i=>i.type||'Other'))].sort();
 
+  // Determine if active filter is a location or type
+  const activeLoc  = locs.includes(activeFilter)  ? activeFilter : '';
+  const activeType = types.includes(activeFilter) ? activeFilter : '';
+
+  // Quick pills: All, Needed, Low, Staples
   let h = `<button class="pill ${activeFilter==='all'?'active':''}" data-f="all">All (${items.length})</button>`;
   if(needed>0) h+=`<button class="pill ${activeFilter==='needed'?'active':''}" data-f="needed">🛒 Needed (${needed})</button>`;
-  if(low>0) h+=`<button class="pill warn-pill ${activeFilter==='low'?'active':''}" data-f="low">⚠️ Low (${low})</button>`;
+  if(low>0) h+=`<button class="pill warn-pill ${activeFilter==='low'?'active':''}" data-f="low">⚠️ Low</button>`;
   h+=`<button class="pill ${activeFilter==='staple'?'active':''}" data-f="staple">⭐ Staples</button>`;
-  h+=`<span class="pill-sep">|</span>`;
-  locs.forEach(l=>h+=`<button class="pill ${activeFilter===l?'active':''}" data-f="${esc(l)}">${LOC_ICONS[l]||'📦'} ${esc(l)}</button>`);
-  h+=`<span class="pill-sep">|</span>`;
-  types.forEach(t=>h+=`<button class="pill ${activeFilter===t?'active':''}" data-f="${esc(t)}">${esc(t)}</button>`);
+
+  // Separator
+  h+=`<span class="filter-sep">|</span>`;
+
+  // Location dropdown
+  h+=`<select class="filter-select ${activeLoc?'active':''}" id="filterLocSelect">`;
+  h+=`<option value="">📍 Location</option>`;
+  locs.forEach(l=>h+=`<option value="${esc(l)}" ${activeLoc===l?'selected':''}>${LOC_ICONS[l]||'📦'} ${esc(l)}</option>`);
+  h+=`</select>`;
+
+  // Type dropdown
+  h+=`<select class="filter-select ${activeType?'active':''}" id="filterTypeSelect">`;
+  h+=`<option value="">🏷️ Category</option>`;
+  types.forEach(t=>h+=`<option value="${esc(t)}" ${activeType===t?'selected':''}>${esc(t)}</option>`);
+  h+=`</select>`;
 
   row.innerHTML = h;
   row.querySelectorAll('.pill[data-f]').forEach(p=>p.addEventListener('click',()=>{activeFilter=p.dataset.f;renderFilters();renderStock();}));
+  const locSel = document.getElementById('filterLocSelect');
+  const typSel = document.getElementById('filterTypeSelect');
+  if(locSel) locSel.addEventListener('change', e=>{ activeFilter=e.target.value||'all'; renderFilters(); renderStock(); });
+  if(typSel) typSel.addEventListener('change', e=>{ activeFilter=e.target.value||'all'; renderFilters(); renderStock(); });
 
   // Update shop badge
   const badge = document.getElementById('shopBadge');
