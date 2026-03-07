@@ -639,8 +639,9 @@
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
 import {
-  getFirestore, doc, collection, getDocs, setDoc, updateDoc, deleteDoc,
-  onSnapshot, enableIndexedDbPersistence, writeBatch, serverTimestamp
+  initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
+  doc, collection, getDocs, setDoc, updateDoc, deleteDoc,
+  onSnapshot, writeBatch, serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 import {
   getAuth, signInAnonymously, onAuthStateChanged
@@ -658,15 +659,13 @@ const firebaseConfig = {
 };
 
 const fbApp = initializeApp(firebaseConfig);
-const db = getFirestore(fbApp);
-const auth = getAuth(fbApp);
 
-// Enable offline persistence
-try {
-  await enableIndexedDbPersistence(db);
-} catch(e) {
-  console.warn('Persistence:', e.code);
-}
+// Initialise Firestore with persistent cache (modern API, replaces enableIndexedDbPersistence)
+const db = initializeFirestore(fbApp, {
+  cache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+});
+
+const auth = getAuth(fbApp);
 
 // ── SEED DATA ─────────────────────────────────────────────────────────
 const SEED = [
