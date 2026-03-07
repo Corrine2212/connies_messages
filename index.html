@@ -37,7 +37,9 @@
     --red-bg:    #fde8e6;
     --yellow:    #b8860b;
     --yellow-bg: #fef9e7;
-    --nav-h:     72px;
+    --nav-h:      72px;
+    --safe-top:   env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
     --header-bg: #c4622d;
     --header-fg: #ffffff;
     --shadow:    0 2px 12px rgba(90,40,10,.10);
@@ -287,25 +289,23 @@
     background: var(--surface);
     border-top: 1px solid var(--border);
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
+    justify-content: space-around;
+    align-items: center;
     flex-shrink: 0;
     z-index: 20;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    width: 100%;
+    box-sizing: border-box;
+    padding-top: 10px;
+    padding-bottom: max(env(safe-area-inset-bottom), 16px);
     box-shadow: 0 -2px 12px rgba(90,40,10,.08);
     transition: background .3s, border-color .3s;
   }
-  .nav-btn-row {
-    display: flex;
-    height: var(--nav-h);
-    align-items: center;
-  }
   .nav-btn {
     flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 3px; border: none; background: none; cursor: pointer; color: var(--text3);
+    gap: 4px; border: none; background: none; cursor: pointer; color: var(--text3);
     font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 600;
     letter-spacing: .3px; transition: color .18s; padding: 0; position: relative;
-    height: 100%;
+    min-width: 60px;
   }
   .nav-btn .nav-icon { font-size: 22px; line-height: 1; transition: transform .2s; }
   .nav-btn.active { color: var(--accent); }
@@ -534,7 +534,7 @@
   /* ═══════════════════════════════════════════
      TOAST
   ═══════════════════════════════════════════ */
-  .toast { position: fixed; bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 12px); left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--bg); padding: 10px 20px; border-radius: 50px; font-size: 13px; font-weight: 500; z-index: 200; opacity: 0; transition: transform .3s, opacity .3s; white-space: nowrap; max-width: calc(100vw - 32px); text-align: center; pointer-events: none; }
+  .toast { position: fixed; bottom: calc(62px + max(env(safe-area-inset-bottom), 16px) + 12px); left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--bg); padding: 10px 20px; border-radius: 50px; font-size: 13px; font-weight: 500; z-index: 200; opacity: 0; transition: transform .3s, opacity .3s; white-space: nowrap; max-width: calc(100vw - 32px); text-align: center; pointer-events: none; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   /* ═══════════════════════════════════════════
@@ -557,7 +557,7 @@
   ═══════════════════════════════════════════ */
   .fab {
     position: fixed;
-    bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 16px);
+    bottom: calc(62px + max(env(safe-area-inset-bottom), 16px) + 16px);
     right: 20px;
     width: 52px; height: 52px;
     border-radius: 50%;
@@ -626,10 +626,7 @@
       overflow-y: auto;
     }
 
-    /* On desktop, nav-btn-row is just a transparent passthrough */
-    .nav-btn-row {
-      display: contents;
-    }
+
 
     /* Sidebar branding */
     .nav-sidebar-brand {
@@ -956,25 +953,23 @@
       </svg>
       Connie's
     </div>
-    <div class="nav-btn-row">
-      <button class="nav-btn active" data-tab="stock">
-        <span class="nav-icon">📦</span>
-        Stock
-      </button>
-      <button class="nav-btn" data-tab="shop">
-        <span class="nav-icon">🛍️</span>
-        Shopping
-        <span class="nav-badge" id="shopBadge" style="display:none">0</span>
-      </button>
-      <button class="nav-btn" data-tab="history">
-        <span class="nav-icon">📅</span>
-        History
-      </button>
-      <button class="nav-btn" data-tab="settings">
-        <span class="nav-icon">⚙️</span>
-        Settings
-      </button>
-    </div>
+    <button class="nav-btn active" data-tab="stock">
+      <span class="nav-icon">📦</span>
+      Stock
+    </button>
+    <button class="nav-btn" data-tab="shop">
+      <span class="nav-icon">🛍️</span>
+      Shopping
+      <span class="nav-badge" id="shopBadge" style="display:none">0</span>
+    </button>
+    <button class="nav-btn" data-tab="history">
+      <span class="nav-icon">📅</span>
+      History
+    </button>
+    <button class="nav-btn" data-tab="settings">
+      <span class="nav-icon">⚙️</span>
+      Settings
+    </button>
   </nav>
 </div>
 
