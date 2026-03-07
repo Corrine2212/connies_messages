@@ -516,17 +516,11 @@
      DESKTOP RESPONSIVE LAYOUT
   ═══════════════════════════════════════════ */
   @media(min-width:768px) {
-    html, body { overflow: auto; height: 100%; }
-
-    body {
-      background: var(--bg2);
-      display: grid;
-      grid-template-rows: 1fr;
-      min-height: 100vh;
-    }
+    html, body { overflow: hidden; height: 100%; background: var(--bg2); }
 
     #app {
       max-width: 100%;
+      width: 100%;
       height: 100vh;
       display: grid;
       grid-template-rows: auto 1fr;
@@ -534,107 +528,117 @@
       grid-template-areas:
         "sidebar header"
         "sidebar main";
+      margin: 0;
     }
 
-    /* Header spans only the main content column on desktop */
+    /* Header — main content column only */
     header {
       grid-area: header;
-      padding: 0 24px;
+      padding: 0 28px;
+      border-radius: 0;
     }
     header .date-nav { padding: 8px 0 14px; }
 
-    /* Sidebar replaces bottom nav on desktop */
+    /* Sidebar — full height left column */
     .bottom-nav {
       grid-area: sidebar;
       flex-direction: column;
-      height: 100%;
+      height: 100vh;
       width: 240px;
       border-top: none;
       border-right: 1px solid var(--border);
-      padding-bottom: 0;
-      padding-top: 0;
-      box-shadow: 2px 0 12px rgba(90,40,10,.06);
+      border-bottom: none;
+      padding: 0;
+      box-shadow: none;
       justify-content: flex-start;
       gap: 0;
+      background: var(--surface);
+      overflow-y: auto;
     }
-
-    /* Sidebar logo/title area */
-    .bottom-nav::before {
-      content: '';
-      display: block;
-      height: 20px;
-    }
-
-    .nav-btn {
-      flex-direction: row;
-      justify-content: flex-start;
-      padding: 14px 20px;
-      font-size: 13px;
-      gap: 12px;
-      border-radius: 10px;
-      margin: 2px 12px;
-      width: calc(100% - 24px);
-      flex: 0 0 auto;
-    }
-    .nav-btn .nav-icon { font-size: 20px; }
-    .nav-btn.active { background: var(--accent-bg); }
-    .nav-btn.active .nav-icon { transform: none; }
-    .nav-badge { right: 12px; top: 50%; transform: translateY(-50%); }
 
     /* Sidebar branding */
     .nav-sidebar-brand {
-      padding: 20px 20px 10px;
+      padding: 22px 20px 14px;
       font-family: 'Playfair Display', serif;
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 700;
       color: var(--text);
       display: flex !important;
       align-items: center;
       gap: 10px;
+      border-bottom: 1px solid var(--border);
       margin-bottom: 8px;
     }
 
-    /* Content area */
+    /* Nav buttons — horizontal row style becomes vertical list */
+    .nav-btn {
+      flex-direction: row;
+      justify-content: flex-start;
+      padding: 12px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      gap: 12px;
+      border-radius: 10px;
+      margin: 2px 10px;
+      width: calc(100% - 20px);
+      flex: 0 0 auto;
+    }
+    .nav-btn .nav-icon { font-size: 20px; width: 24px; text-align: center; flex-shrink: 0; }
+    .nav-btn.active { background: var(--accent-bg); color: var(--accent); }
+    .nav-btn.active .nav-icon { transform: none; }
+    .nav-badge { right: 14px; top: 50%; transform: translateY(-50%); }
+
+    /* Content area — fills remaining space */
     .content-area {
       grid-area: main;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
-    /* FAB repositioned on desktop */
+    /* All scrollable panes fill full width */
+    .tab-pane { width: 100%; }
+    .scrollable { padding-bottom: 24px; }
+
+    /* FAB — bottom right of content area */
     .fab {
-      right: 32px;
-      bottom: 32px;
+      right: 28px;
+      bottom: 28px;
     }
 
-    /* Wider cards layout */
-    .items-list { padding: 0 20px; }
-    .shop-section { margin: 0 20px 12px; }
-    .shop-hero { margin: 16px 20px; }
-    .shop-loc-header { padding: 12px 20px 4px; }
-    .history-card { margin: 6px 20px; }
-    .settings-section { margin: 0 20px 16px; }
+    /* Content padding */
+    .items-list { padding: 0 24px; }
+    .section-header { padding: 14px 24px 6px; }
+    .search-bar { padding: 12px 24px 0; background: var(--bg); }
+    .filter-row { padding: 8px 24px 10px; background: var(--bg); }
+    .shop-section { margin: 0 24px 12px; }
+    .shop-hero { margin: 16px 24px; }
+    .shop-loc-header { padding: 14px 24px 4px; }
+    .history-card { margin: 6px 24px; }
+    .settings-section { margin: 0 24px 16px; }
+    .settings-hero { margin: 20px 24px 0; }
 
     /* 2-column stock grid on wide screens */
-    @media(min-width:1100px) {
+    @media(min-width:1200px) {
       #app { grid-template-columns: 260px 1fr; }
-      .items-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 20px; }
-      .section-header { padding: 14px 20px 6px; }
+      .items-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     }
 
     /* Modal centers on desktop */
     .modal-overlay { align-items: center; }
     .modal {
       border-radius: 22px;
-      max-width: 500px;
-      max-height: 85vh;
-      transform: scale(.95) translateY(0);
+      max-width: 520px;
+      max-height: 88vh;
+      transform: scale(.96) translateY(0);
     }
     .modal-overlay.open .modal { transform: scale(1) translateY(0); }
 
-    /* Scrollbar visible but styled on desktop */
-    .scrollable::-webkit-scrollbar { display: block; width: 6px; }
+    /* Styled scrollbars */
+    .scrollable::-webkit-scrollbar { display: block; width: 5px; }
     .scrollable::-webkit-scrollbar-track { background: transparent; }
     .scrollable::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    .bottom-nav::-webkit-scrollbar { display: none; }
   }
   /* Auth form */
   .auth-form { padding: 4px 0 8px; display: flex; flex-direction: column; gap: 10px; }
@@ -915,6 +919,10 @@
         <div class="form-field">
           <label>Location</label>
           <select id="mLocation"></select>
+          <div id="newLocWrap" style="display:none;margin-top:6px">
+            <input type="text" id="newLocInput" placeholder="New location name…" autocorrect="off"
+              style="width:100%;padding:9px 12px;border-radius:8px;border:1.5px solid var(--accent-bd);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none"/>
+          </div>
         </div>
         <div class="form-field">
           <label>Type / Category</label>
@@ -1564,11 +1572,31 @@ document.getElementById('searchInput').addEventListener('input',e=>{searchQ=e.ta
 document.getElementById('clearSearch').addEventListener('click',()=>{document.getElementById('searchInput').value='';searchQ='';renderStock();});
 
 // ── ITEM MODAL ────────────────────────────────────────────────────────
-function popLocs() {
-  const sel = document.getElementById('mLocation');
-  const all = [...new Set(['Bathroom','Cupboard','Freezer','Fridge','Fruit bowl',...items.map(i=>i.location)])].filter(Boolean).sort();
-  sel.innerHTML = all.map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join('');
+function getLocations() {
+  return [...new Set(['Bathroom','Cupboard','Freezer','Fridge','Fruit bowl',
+    ...items.map(i=>i.location)])].filter(Boolean).sort();
 }
+
+function popLocs(selected) {
+  const sel = document.getElementById('mLocation');
+  const all = getLocations();
+  sel.innerHTML = all.map(l=>`<option value="${esc(l)}" ${l===selected?'selected':''}>${esc(l)}</option>`).join('')
+    + `<option value="__new__">＋ New location…</option>`;
+  // Hide new-loc input by default
+  document.getElementById('newLocWrap').style.display = 'none';
+}
+
+document.getElementById('mLocation').addEventListener('change', e => {
+  const wrap = document.getElementById('newLocWrap');
+  const inp  = document.getElementById('newLocInput');
+  if (e.target.value === '__new__') {
+    wrap.style.display = 'block';
+    inp.value = '';
+    setTimeout(() => inp.focus(), 50);
+  } else {
+    wrap.style.display = 'none';
+  }
+});
 function openAdd() {
   editId=null;
   document.getElementById('modalTitle').textContent='Add Item';
@@ -1577,7 +1605,7 @@ function openAdd() {
   document.getElementById('mQty').value='0';document.getElementById('mStaple').value='No';
   document.getElementById('modalDelete').style.display='none';
   document.getElementById('dupeWarning').classList.remove('show');
-  popLocs(); document.getElementById('itemModal').classList.add('open');
+  popLocs(); document.getElementById('newLocWrap').style.display='none'; document.getElementById('itemModal').classList.add('open');
   setTimeout(()=>document.getElementById('mName').focus(),300);
 }
 function openEdit(id) {
@@ -1589,7 +1617,7 @@ function openEdit(id) {
   document.getElementById('mQty').value=it.qty??0;document.getElementById('mStaple').value=it.staple?'Yes':'No';
   document.getElementById('modalDelete').style.display='inline-flex';
   document.getElementById('dupeWarning').classList.remove('show');
-  popLocs(); document.getElementById('mLocation').value=it.location||'Cupboard';
+  popLocs(it.location||'Cupboard');
   document.getElementById('itemModal').classList.add('open');
 }
 
@@ -1616,7 +1644,11 @@ document.getElementById('modalSave').addEventListener('click', async () => {
   if(!name){toast('Please enter a name');return;}
 
   // Block hard duplicate (same name, same location) for new items
-  const loc = document.getElementById('mLocation').value;
+  let loc = document.getElementById('mLocation').value;
+  if (loc === '__new__') {
+    loc = document.getElementById('newLocInput').value.trim();
+    if (!loc) { toast('Please enter a location name'); return; }
+  }
   if(!editId) {
     const dupe = items.find(i=>i.name.toLowerCase()===name.toLowerCase()&&i.location===loc);
     if(dupe){toast(`"${name}" already exists in ${loc}`);return;}
