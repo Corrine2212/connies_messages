@@ -1382,6 +1382,7 @@ function getFiltered() {
   if (searchQ) { const q=searchQ.toLowerCase(); list=list.filter(i=>i.name.toLowerCase().includes(q)||(i.type||'').toLowerCase().includes(q)); }
   const needed = dayNeeded(viewDate), bought = dayBought(viewDate);
   if (activeFilter==='needed') return list.filter(i=>needed.has(i.id));
+  if (activeFilter==='restock') return list.filter(i=>stockStatus(i)==='restock');
   if (activeFilter==='low') return list.filter(i=>stockStatus(i)!=='ok');
   if (activeFilter==='staple') return list.filter(i=>i.staple);
   if (activeFilter!=='all') return list.filter(i=>i.location===activeFilter||(i.type||'Other')===activeFilter);
@@ -1392,6 +1393,7 @@ function renderFilters() {
   const row = document.getElementById('filterRow');
   const needed = dayNeeded(viewDate).size;
   const low = items.filter(i=>stockStatus(i)!=='ok').length;
+  const restock = items.filter(i=>stockStatus(i)==='restock').length;
   const locs = [...new Set(items.map(i=>i.location))].filter(Boolean).sort();
   const types = [...new Set(items.map(i=>i.type||'Other'))].sort();
 
@@ -1403,6 +1405,7 @@ function renderFilters() {
   let pills = `<button class="pill ${activeFilter==='all'?'active':''}" data-f="all">All (${items.length})</button>`;
   if(needed>0) pills+=`<button class="pill ${activeFilter==='needed'?'active':''}" data-f="needed">🛒 Needed (${needed})</button>`;
   if(low>0) pills+=`<button class="pill warn-pill ${activeFilter==='low'?'active':''}" data-f="low">⚠️ Low</button>`;
+  if(restock>0) pills+=`<button class="pill warn-pill ${activeFilter==='restock'?'active':''}" data-f="restock">🔴 Restock (${restock})</button>`;
   pills+=`<button class="pill ${activeFilter==='staple'?'active':''}" data-f="staple">⭐ Staples</button>`;
 
   // Row 2: dropdowns (full width, side by side)
