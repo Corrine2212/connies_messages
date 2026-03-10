@@ -1339,18 +1339,17 @@ async function deleteItem(id) {
 
 // ── CARRY FORWARD ────────────────────────────────────────────────────
 function getUnboughtFromPastDays() {
-  // Look back up to 30 days, collect all items that were needed but never bought
-  const unbought = new Set();
+  // Find the most recent past day that has needed items, use only that day
   const tk = todayKey();
   for (let i = 1; i <= 30; i++) {
     const k = offsetKey(tk, -i);
     const d = days[k];
     if (!d || !d.needed || !d.needed.length) continue;
-    d.needed.forEach(id => {
-      if (!d.bought?.includes(id)) unbought.add(id);
-    });
+    // Found the most recent past day with items — return its unbought ones
+    const unbought = new Set(d.needed.filter(id => !d.bought?.includes(id)));
+    return unbought;
   }
-  return unbought;
+  return new Set();
 }
 
 async function carryForward() {
