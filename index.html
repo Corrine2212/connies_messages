@@ -404,7 +404,6 @@
     border: 2px solid var(--border); background: var(--surface);
     display: flex; align-items: center; justify-content: center; font-size: 9px;
     transition: all .2s; cursor: pointer;
-    padding: 8px; box-sizing: content-box;
   }
   .status-dot:active { transform: scale(.88); }
   .item-card.needed .status-dot { background: var(--accent); border-color: var(--accent); color: #fff; }
@@ -907,7 +906,7 @@
               <span class="settings-row-icon">→</span>
               <div style="flex:1">
                 <div class="settings-row-label">Carry Forward</div>
-                <div class="settings-row-sub">Copy unbought items from yesterday to today</div>
+                <div class="settings-row-sub">Copy all unbought items from past days to today</div>
               </div>
             </div>
           </div>
@@ -1338,24 +1337,34 @@ async function deleteItem(id) {
 }
 
 // ── CARRY FORWARD ────────────────────────────────────────────────────
-async function carryForward() {
-  const yesterday = offsetKey(viewDate, -1);
-  const yDay = days[yesterday];
-  if (!yDay || !yDay.needed || yDay.needed.length === 0) {
-    toast('Nothing to carry from yesterday'); return;
+function getUnboughtFromPastDays() {
+  // Look back up to 30 days, collect all items that were needed but never bought
+  const unbought = new Set();
+  const tk = todayKey();
+  for (let i = 1; i <= 30; i++) {
+    const k = offsetKey(tk, -i);
+    const d = days[k];
+    if (!d || !d.needed || !d.needed.length) continue;
+    d.needed.forEach(id => {
+      if (!d.bought?.includes(id)) unbought.add(id);
+    });
   }
-  const unbought = yDay.needed.filter(id => !yDay.bought?.includes(id));
-  if (!unbought.length) { toast('All yesterday\'s items were bought! 🎉'); return; }
+  return unbought;
+}
+
+async function carryForward() {
+  const unbought = getUnboughtFromPastDays();
+  if (!unbought.size) { toast('No unbought items found in past days 🎉'); return; }
 
   const today = ensureDay(viewDate);
   const existing = new Set(today.needed);
-  const toAdd = unbought.filter(id => !existing.has(id));
-  if (!toAdd.length) { toast('Already carried forward'); return; }
+  const toAdd = [...unbought].filter(id => !existing.has(id) && items.find(i=>i.id===id));
+  if (!toAdd.length) { toast('All past unbought items already on today\'s list'); return; }
 
   today.needed = [...today.needed, ...toAdd];
   await saveDay(viewDate);
   renderFilters(); renderStock();
-  toast(`Carried forward ${toAdd.length} item${toAdd.length!==1?'s':''} ↓`);
+  toast(`Carried forward ${toAdd.length} item${toAdd.length!==1?'s':''} from past days ↓`);
 }
 
 // ── DATE HEADER ───────────────────────────────────────────────────────
@@ -1364,8 +1373,7 @@ function renderDateHeader() {
   const {weekday, full} = keyDisplay(viewDate);
   const isToday = viewDate === tk;
   const isFuture = viewDate > tk;
-  const yDay = days[offsetKey(viewDate,-1)];
-  const hasCarry = yDay && yDay.needed && yDay.needed.some(id => !yDay.bought?.includes(id));
+  const hasCarry = getUnboughtFromPastDays().size > 0;
 
   document.getElementById('dateMain').innerHTML =
     weekday + (isToday ? ' <span class="today-badge">TODAY</span>' : '') +
@@ -1439,8 +1447,7 @@ function renderFilters() {
 function renderStock() {
   const list = document.getElementById('stockList');
   const needed = dayNeeded(viewDate), bought = dayBought(viewDate);
-  const yday = days[offsetKey(viewDate,-1)];
-  const carriedFromYday = yday ? new Set(yday.needed||[]) : new Set();
+  const carriedFromPast = getUnboughtFromPastDays();
   const filtered = getFiltered();
 
   if (!filtered.length) {
@@ -1460,7 +1467,7 @@ function renderStock() {
     h += `<div class="section-header"><span class="section-icon">${LOC_ICONS[loc]||'📦'}</span><span class="section-title">${esc(loc)}</span><span class="section-count">${its.length}</span></div><div class="items-list">`;
     its.forEach(it => {
       const isNeeded = needed.has(it.id), isBought = bought.has(it.id);
-      const isCarried = carriedFromYday.has(it.id) && isNeeded && viewDate === todayKey();
+      const isCarried = carriedFromPast.has(it.id) && isNeeded && viewDate === todayKey();
       const sc = isBought?'bought':isNeeded?'needed':'';
       const dot = isBought?'✓':isNeeded?'!':'';
       const status = stockStatus(it);
