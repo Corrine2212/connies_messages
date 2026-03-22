@@ -762,6 +762,144 @@
   }
   .update-banner.show { transform: translateY(0); }
   .update-banner button { background: rgba(255,255,255,.25); border: none; color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+
+  /* ═══════════════════════════════════════════
+     MEAL PLAN TAB
+  ═══════════════════════════════════════════ */
+  .meal-week-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px 10px; gap: 10px; position: sticky; top: 0;
+    background: var(--bg); z-index: 5; border-bottom: 1px solid var(--border);
+  }
+  .meal-week-nav { background: var(--surface); border: 1.5px solid var(--border); color: var(--text2);
+    width: 34px; height: 34px; border-radius: 50%; cursor: pointer; font-size: 17px;
+    display: flex; align-items: center; justify-content: center; transition: all .18s; flex-shrink: 0; }
+  .meal-week-nav:active { background: var(--accent-bg); border-color: var(--accent-bd); }
+  .meal-week-label-wrap { text-align: center; }
+  .meal-week-range { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: var(--text); }
+  .meal-week-badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .05em;
+    text-transform: uppercase; padding: 2px 9px; border-radius: 20px; margin-top: 3px;
+    background: var(--accent-bg); color: var(--accent); border: 1px solid var(--accent-bd); }
+  .meal-week-badge.past { background: var(--bg3); color: var(--text3); border-color: var(--border); }
+  .meal-week-badge.future { background: var(--bg2); color: var(--text2); border-color: var(--border); }
+
+  .mp-days { display: flex; flex-direction: column; gap: 8px; padding: 12px 12px 20px; }
+
+  .mp-day-card { background: var(--surface); border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border); box-shadow: var(--shadow); overflow: hidden; }
+  .mp-day-header { display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px 8px; }
+  .mp-day-name { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 700; color: var(--text); }
+  .mp-day-date { font-size: 11px; color: var(--text3); margin-top: 1px; }
+  .mp-plan-btn { background: var(--bg2); border: 1.5px solid var(--border); color: var(--text2);
+    border-radius: 20px; padding: 5px 13px; font-size: 12px; font-weight: 600;
+    font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .18s; white-space: nowrap; }
+  .mp-plan-btn:active { background: var(--accent-bg); border-color: var(--accent-bd); color: var(--accent); }
+
+  .mp-slots { padding: 0 12px 12px; display: flex; flex-direction: column; gap: 6px; }
+  .mp-slot { display: flex; align-items: center; gap: 10px; padding: 9px 11px;
+    background: var(--bg2); border-radius: 8px; border: 1px solid var(--border); }
+  .mp-slot-label { font-size: 10px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+    color: var(--text3); width: 44px; flex-shrink: 0; }
+  .mp-slot-content { flex: 1; min-width: 0; }
+  .mp-slot-meal { font-size: 13px; font-weight: 600; color: var(--text);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mp-slot-meta { display: flex; align-items: center; gap: 6px; margin-top: 2px; flex-wrap: wrap; }
+  .mp-slot-empty { font-size: 13px; color: var(--text3); font-style: italic; }
+  .mp-slot-skip { font-size: 13px; color: var(--text3); }
+  .mp-effort-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .mp-effort-dot.easy { background: var(--green); }
+  .mp-effort-dot.medium { background: var(--yellow); }
+  .mp-effort-dot.hard { background: var(--red); }
+  .mp-time-tag { font-size: 11px; color: var(--text3); }
+  .mp-stock-badge { font-size: 10px; font-weight: 600; padding: 1px 7px; border-radius: 10px; }
+  .mp-stock-badge.full { background: var(--green-bg); color: var(--green); }
+  .mp-stock-badge.partial { background: var(--yellow-bg); color: var(--yellow); }
+  .mp-stock-badge.low { background: var(--red-bg); color: var(--red); }
+
+  .mp-week-actions { padding: 4px 12px 16px; display: flex; justify-content: center; }
+
+  /* ── MEAL PLAN MODALS ── */
+  .mp-day-section { background: var(--bg2); border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm); padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+  .mp-section-title { font-size: 11px; font-weight: 700; letter-spacing: .07em;
+    text-transform: uppercase; color: var(--text2); }
+  .mp-question { display: flex; flex-direction: column; gap: 7px; }
+  .mp-question-label { font-size: 14px; color: var(--text); font-weight: 500; }
+  .mp-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+  .mp-pill { background: var(--surface); border: 1.5px solid var(--border); color: var(--text2);
+    border-radius: 20px; padding: 6px 14px; font-size: 13px; font-family: 'DM Sans', sans-serif;
+    cursor: pointer; transition: all .18s; }
+  .mp-pill.selected { background: var(--accent-bg); border-color: var(--accent-bd); color: var(--accent); }
+
+  .mp-suggested-card { background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm); padding: 11px 13px; display: flex; align-items: center; gap: 10px; }
+  .mp-suggested-info { flex: 1; min-width: 0; }
+  .mp-suggested-name { font-weight: 600; font-size: 14px; color: var(--text); }
+  .mp-change-btn { background: var(--bg2); border: 1.5px solid var(--border); color: var(--text2);
+    border-radius: 20px; padding: 5px 12px; font-size: 12px; font-weight: 600;
+    font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .18s; white-space: nowrap; }
+  .mp-change-btn:active { background: var(--accent-bg); border-color: var(--accent-bd); color: var(--accent); }
+  .mp-suggest-btn { background: var(--accent-bg); border: 1.5px solid var(--accent-bd); color: var(--accent);
+    border-radius: var(--radius-sm); padding: 9px 14px; font-size: 13px; font-weight: 600;
+    font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .18s; width: 100%; text-align: center; }
+  .mp-suggest-btn:active { background: var(--accent); color: #fff; }
+  .mp-manual-btn { background: var(--bg2); border: 1.5px solid var(--border); color: var(--text2);
+    border-radius: var(--radius-sm); padding: 8px 14px; font-size: 12px; font-weight: 600;
+    font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .18s; width: 100%; text-align: center; margin-top: 6px; }
+
+  /* ── MEAL LIBRARY MODAL ── */
+  .ml-toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; }
+  .ml-search { flex: 1; padding: 9px 14px; border-radius: 20px; border: 1.5px solid var(--border);
+    background: var(--surface); font-family: 'DM Sans', sans-serif; font-size: 13px;
+    color: var(--text); outline: none; transition: border-color .18s; }
+  .ml-search:focus { border-color: var(--accent-bd); }
+  .ml-search::placeholder { color: var(--text3); }
+  .ml-list { display: flex; flex-direction: column; gap: 8px; max-height: 55vh; overflow-y: auto; }
+  .ml-item { display: flex; align-items: center; gap: 12px; padding: 11px 13px;
+    background: var(--bg2); border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+    cursor: pointer; transition: all .18s; }
+  .ml-item:active { background: var(--accent-bg); border-color: var(--accent-bd); }
+  .ml-item-name { flex: 1; font-weight: 600; font-size: 14px; color: var(--text); }
+  .mp-effort-pill { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; text-transform: capitalize; }
+  .mp-effort-pill.easy { background: var(--green-bg); color: var(--green); }
+  .mp-effort-pill.medium { background: var(--yellow-bg); color: var(--yellow); }
+  .mp-effort-pill.hard { background: var(--red-bg); color: var(--red); }
+
+  /* ── MEALS MANAGEMENT (in settings) ── */
+  .meal-card-edit { display: flex; align-items: center; gap: 12px; padding: 11px 13px;
+    background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+    box-shadow: var(--shadow); cursor: pointer; transition: border-color .18s; }
+  .meal-card-edit:active { border-color: var(--accent-bd); }
+  .meal-card-info { flex: 1; min-width: 0; }
+  .meal-card-name { font-weight: 600; font-size: 14px; color: var(--text); }
+  .meal-card-meta { display: flex; align-items: center; gap: 6px; margin-top: 3px; flex-wrap: wrap; }
+  .meal-card-time { font-size: 11px; color: var(--text3); }
+  .meal-card-slots { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+  /* ── HISTORY IN SETTINGS ── */
+  .settings-history-item { padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .settings-history-item + .settings-history-item { border-top: 1px solid var(--border); }
+  .sh-week { font-family: 'Playfair Display', serif; font-size: 14px; color: var(--text); }
+  .sh-count { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .sh-arrow { color: var(--text3); font-size: 14px; }
+
+  /* Full history modal */
+  .history-full-list { display: flex; flex-direction: column; gap: 8px; }
+
+  /* btn-text-link */
+  .btn-text-link { background: none; border: none; color: var(--accent); font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 600; cursor: pointer; padding: 4px 0; text-decoration: none; }
+  .btn-text-link:active { opacity: .7; }
+
+  /* Missing ingredients list */
+  .missing-meal-group { margin-bottom: 12px; }
+  .missing-meal-label { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--text2); margin-bottom: 6px; }
+  .missing-ing-item { display: flex; align-items: center; gap: 8px; padding: 7px 11px;
+    background: var(--bg2); border-radius: 8px; margin-bottom: 4px; font-size: 13px; color: var(--text); }
+  .missing-ing-item::before { content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); flex-shrink: 0; }
   </style>
 </head>
 <body>
@@ -803,7 +941,7 @@
           <rect x="11" y="20" width="12" height="1.5" rx=".75" fill="rgba(196,98,45,0.2)"/>
           <rect x="11" y="24" width="12" height="1.5" rx=".75" fill="rgba(196,98,45,0.2)"/>
         </svg>
-        <div class="app-title">Connie's Messages<span>pantry & shopping</span></div>
+        <div class="app-title">Connie's<span>pantry · shopping · meals</span></div>
       </div>
       <div class="header-actions">
         <div class="sync-dot" id="syncDot" title="Sync status"></div>
@@ -840,9 +978,9 @@
       <div class="scrollable" id="shopList"></div>
     </div>
 
-    <!-- HISTORY TAB -->
-    <div class="tab-pane" id="pane-history">
-      <div class="scrollable" id="historyList"></div>
+    <!-- MEAL PLAN TAB -->
+    <div class="tab-pane" id="pane-meals">
+      <div class="scrollable" id="mealPlanScroll"></div>
     </div>
 
     <!-- SETTINGS TAB -->
@@ -930,6 +1068,16 @@
         </div>
 
         <div class="settings-section">
+          <div class="settings-label">Shopping History</div>
+          <div class="settings-card" id="settingsHistoryCard">
+            <!-- populated by renderSettingsHistory() -->
+          </div>
+          <div style="text-align:center;padding:4px 0 8px">
+            <button class="btn-text-link" id="viewAllHistoryBtn">View all history →</button>
+          </div>
+        </div>
+
+        <div class="settings-section">
           <div class="settings-label">Install App</div>
           <div class="settings-card">
             <div class="settings-row">
@@ -950,7 +1098,7 @@
         </div>
 
         <div style="text-align:center;padding:16px;font-size:12px;color:var(--text3)">
-          Connie's Messages v3.0 · Data synced with Firebase
+          Connie's Messages v4.0 · pantry · shopping · meals
         </div>
       </div>
     </div>
@@ -980,9 +1128,9 @@
       Shopping
       <span class="nav-badge" id="shopBadge" style="display:none">0</span>
     </button>
-    <button class="nav-btn" data-tab="history">
-      <span class="nav-icon">📅</span>
-      History
+    <button class="nav-btn" data-tab="meals">
+      <span class="nav-icon">🥘</span>
+      Meal Plan
     </button>
     <button class="nav-btn" data-tab="settings">
       <span class="nav-icon">⚙️</span>
@@ -1078,6 +1226,118 @@
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" id="carryModalCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- MEAL PLAN: DAY MODAL -->
+<div class="modal-overlay" id="mpDayModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="mpDayModalTitle">Plan Day</div>
+    <div class="modal-body" id="mpDayModalBody" style="gap:12px;display:flex;flex-direction:column;padding:16px 16px 8px"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="mpDayModalCancel">Cancel</button>
+      <button class="btn-primary" id="mpDayModalSave">Save day</button>
+    </div>
+  </div>
+</div>
+
+<!-- MEAL PLAN: PICKER MODAL -->
+<div class="modal-overlay" id="mpPickerModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="mpPickerTitle">Choose a meal</div>
+    <div class="modal-body" style="padding:14px 16px">
+      <input type="text" class="ml-search" id="mpPickerSearch" placeholder="Filter meals…" autocorrect="off"/>
+      <div class="ml-list" id="mpPickerList" style="margin-top:10px"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="mpPickerCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- MEAL PLAN: ADD/EDIT MEAL MODAL -->
+<div class="modal-overlay" id="mpMealModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="mpMealModalTitle">Add Meal</div>
+    <div class="modal-body" style="gap:12px">
+      <div class="form-field">
+        <label>Meal name</label>
+        <input type="text" id="mpMealName" placeholder="e.g. Spaghetti Bolognese" autocorrect="off"/>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label>Effort level</label>
+          <select id="mpMealEffort">
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Cook time (min)</label>
+          <input type="number" id="mpMealTime" placeholder="e.g. 30" min="1" inputmode="numeric"/>
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Suitable for</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text2);cursor:pointer">
+            <input type="checkbox" id="mpSlotLunch" value="lunch" style="accent-color:var(--accent)"/> Lunch
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text2);cursor:pointer">
+            <input type="checkbox" id="mpSlotDinner" value="dinner" style="accent-color:var(--accent)"/> Dinner
+          </label>
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Ingredients <span style="font-weight:400;color:var(--text3)">(one per line)</span></label>
+        <textarea id="mpMealIngredients" rows="5" placeholder="pasta&#10;mince&#10;tinned tomatoes&#10;onion"
+          style="width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;resize:vertical;transition:border-color .18s"></textarea>
+      </div>
+      <div class="form-field">
+        <label>Notes / steps <span style="font-weight:400;color:var(--text3)">(optional)</span></label>
+        <textarea id="mpMealNotes" rows="3" placeholder="Any tips or rough steps…"
+          style="width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;resize:vertical;transition:border-color .18s"></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="mpMealModalCancel">Cancel</button>
+      <button class="btn-danger" id="mpMealDelete" style="display:none">Delete</button>
+      <button class="btn-primary" id="mpMealSave">Save meal</button>
+    </div>
+  </div>
+</div>
+
+<!-- MEAL PLAN: MISSING INGREDIENTS MODAL -->
+<div class="modal-overlay" id="mpMissingModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Missing ingredients</div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:12px">These aren't currently in stock. Add them to your shopping list when ready.</p>
+      <div id="mpMissingList"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" id="mpMissingClose" style="width:100%">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY: FULL VIEW MODAL -->
+<div class="modal-overlay" id="historyFullModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Shopping History</div>
+    <div class="modal-body">
+      <div class="history-full-list" id="historyFullList"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="historyFullClose">Close</button>
     </div>
   </div>
 </div>
@@ -1465,7 +1725,7 @@ function renderDateHeader() {
 
   // Show/hide date nav on history/settings tab
   document.getElementById('dateNavWrap').style.display =
-    (activeTab==='history'||activeTab==='settings') ? 'none' : 'flex';
+    (activeTab==='settings'||activeTab==='meals') ? 'none' : 'flex';
 }
 
 // ── FILTERS ───────────────────────────────────────────────────────────
@@ -1776,11 +2036,12 @@ function switchTab(tab) {
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
   renderDateHeader();
   if(tab==='shop') renderShop();
-  if(tab==='history') renderHistory();
+  if(tab==='meals') mpRenderWeek();
   if(tab==='settings'){
     renderThemeGrid();
     updateAuthUI(auth.currentUser);
     document.getElementById('totalItemsCount').textContent = items.length;
+    renderSettingsHistory();
   }
 }
 document.querySelectorAll('.nav-btn').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
@@ -2001,6 +2262,7 @@ async function handleSignedIn(user) {
   await seedIfEmpty();
   subscribeItems();
   subscribeDays();
+  await mpInit();
   viewDate = todayKey();
   renderDateHeader();
   renderThemeGrid();
@@ -2121,6 +2383,607 @@ document.getElementById('updateBtn').addEventListener('click', () => {
     }
   });
 });
+
+
+
+// ═══════════════════════════════════════════════════════════
+// MEAL PLANNER
+// ═══════════════════════════════════════════════════════════
+
+// ── MEAL PLAN STATE ──────────────────────────────────────
+let mpMeals = [];           // meal library
+let mpWeekPlan = {};        // { "YYYY-MM-DD": { lunch:{...}, dinner:{...} } }
+let mpWeekStart = mpGetWeekStart(new Date());
+let mpEditMealId = null;
+let mpPickerCallback = null;
+let mpDayModalState = {};
+const MP_DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+
+// Firestore paths
+const mpMealsCol = () => collection(db, 'users', uid, 'meals');
+const mpWeekDoc  = (wid) => doc(db, 'users', uid, 'weekPlans', wid);
+
+// ── DATE UTILS ───────────────────────────────────────────
+function mpGetWeekStart(date) {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  d.setDate(d.getDate() + diff);
+  d.setHours(0,0,0,0);
+  return d;
+}
+function mpDateKey(date) { return date.toISOString().slice(0,10); }
+function mpWeekId(ws) { return mpDateKey(ws); }
+function mpFormatRange(ws) {
+  const end = new Date(ws); end.setDate(end.getDate()+6);
+  const o = {day:'numeric',month:'short'};
+  return ws.toLocaleDateString('en-GB',o) + ' – ' + end.toLocaleDateString('en-GB',o);
+}
+function mpFormatDayDate(date) {
+  return date.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+}
+function mpIsCurrentWeek(ws) { return mpDateKey(ws) === mpDateKey(mpGetWeekStart(new Date())); }
+function mpIsPastWeek(ws) { return ws < mpGetWeekStart(new Date()); }
+
+// ── LOAD / SAVE ──────────────────────────────────────────
+async function mpLoadMeals() {
+  mpMeals = [];
+  const snap = await getDocs(mpMealsCol());
+  snap.forEach(d => mpMeals.push({id:d.id,...d.data()}));
+  mpMeals.sort((a,b)=>a.name.localeCompare(b.name));
+}
+
+async function mpLoadWeekPlan() {
+  mpWeekPlan = {};
+  try {
+    const snap = await getDoc(mpWeekDoc(mpWeekId(mpWeekStart)));
+    if (snap.exists()) mpWeekPlan = snap.data().days || {};
+  } catch(e) { console.warn('weekPlan load failed', e); }
+}
+
+async function mpSaveWeekPlan() {
+  const wid = mpWeekId(mpWeekStart);
+  await setDoc(mpWeekDoc(wid), {weekStart:wid, days:mpWeekPlan, updatedAt:serverTimestamp()});
+}
+
+async function mpInit() {
+  await Promise.all([mpLoadMeals(), mpLoadWeekPlan()]);
+  await mpSeedIfEmpty();
+  mpRenderWeek();
+}
+
+// ── SEED EXAMPLE MEALS ───────────────────────────────────
+async function mpSeedIfEmpty() {
+  const snap = await getDocs(mpMealsCol());
+  if (!snap.empty) return;
+  const examples = [
+    {name:'Spaghetti Bolognese',effort:'medium',cookTime:40,ingredients:['spaghetti','mince beef','tinned tomatoes','onion','garlic','olive oil'],notes:'Brown mince, add onion & garlic, pour in tomatoes, simmer 20 mins.',slots:['dinner']},
+    {name:'Cheese on Toast',effort:'easy',cookTime:10,ingredients:['bread','cheddar cheese','butter'],notes:'Grill bread, melt cheese on top.',slots:['lunch']},
+    {name:'Stir Fry with Noodles',effort:'easy',cookTime:20,ingredients:['noodles','mixed veg','soy sauce','garlic','sesame oil'],notes:'Quick stir fry — great when tired.',slots:['lunch','dinner']},
+    {name:'Homemade Soup',effort:'medium',cookTime:45,ingredients:['carrot','potato','onion','stock cubes','cream'],notes:'Chop veg, simmer in stock, blend.',slots:['lunch','dinner']},
+    {name:'Chicken Curry',effort:'medium',cookTime:50,ingredients:['chicken','curry paste','coconut milk','onion','rice'],notes:'Brown chicken, add paste and coconut milk, simmer 30 mins. Serve with rice.',slots:['dinner']},
+    {name:'Jacket Potato',effort:'easy',cookTime:60,ingredients:['potato','butter','cheddar cheese','beans'],notes:'Bake at 200°C for an hour.',slots:['lunch','dinner']},
+    {name:'Scrambled Eggs on Toast',effort:'easy',cookTime:10,ingredients:['eggs','butter','bread','milk'],notes:"Low heat, keep stirring.",slots:['lunch']},
+    {name:'Homemade Pizza',effort:'hard',cookTime:75,ingredients:['pizza dough','passata','mozzarella'],notes:'Make dough or use shop-bought base.',slots:['dinner']},
+  ];
+  for (const meal of examples) {
+    const id = 'meal_' + Date.now() + Math.random().toString(36).slice(2,5);
+    await setDoc(doc(mpMealsCol(), id), {...meal, updatedAt:serverTimestamp()});
+  }
+  await mpLoadMeals();
+}
+
+// ── STOCK CHECK ──────────────────────────────────────────
+function mpCheckStock(meal) {
+  if (!items.length || !meal.ingredients?.length) return {level:'',label:''};
+  const inStock = items.filter(i=>(i.qty||0)>0).map(i=>i.name.toLowerCase().trim());
+  const ings = meal.ingredients.map(x=>x.toLowerCase().trim());
+  const matched = ings.filter(ing => inStock.some(s=>s.includes(ing)||ing.includes(s)));
+  if (matched.length===ings.length) return {level:'full',label:'✓ In stock'};
+  if (matched.length>0) return {level:'partial',label:`${matched.length}/${ings.length} in stock`};
+  return {level:'low',label:'Not in stock'};
+}
+
+function mpGetMissing(meal) {
+  if (!items.length || !meal.ingredients) return meal.ingredients||[];
+  const inStock = items.filter(i=>(i.qty||0)>0).map(i=>i.name.toLowerCase().trim());
+  return meal.ingredients.filter(ing => {
+    const l = ing.toLowerCase().trim();
+    return !inStock.some(s=>s.includes(l)||l.includes(s));
+  });
+}
+
+// ── RENDER WEEK ──────────────────────────────────────────
+function mpRenderWeek() {
+  const scroll = document.getElementById('mealPlanScroll');
+  if (!scroll) return;
+
+  const wid = mpWeekId(mpWeekStart);
+  const badge = mpIsCurrentWeek(mpWeekStart) ? '' : mpIsPastWeek(mpWeekStart) ? ' past' : ' future';
+  const badgeText = mpIsCurrentWeek(mpWeekStart) ? 'Current week' : mpIsPastWeek(mpWeekStart) ? 'Past week' : 'Future week';
+
+  // Check if any meals planned to show missing ingredients button
+  const hasMeals = Object.values(mpWeekPlan).some(d=>(d.lunch?.mealId)||(d.dinner?.mealId));
+
+  let h = `<div class="meal-week-header">
+    <button class="meal-week-nav" id="mpPrevWeek">‹</button>
+    <div class="meal-week-label-wrap">
+      <div class="meal-week-range">${mpFormatRange(mpWeekStart)}</div>
+      <div class="meal-week-badge${badge}">${badgeText}</div>
+    </div>
+    <button class="meal-week-nav" id="mpNextWeek">›</button>
+  </div>
+  <div class="mp-days">`;
+
+  const dates = Array.from({length:7},(_,i)=>{
+    const d = new Date(mpWeekStart); d.setDate(d.getDate()+i); return d;
+  });
+
+  dates.forEach((date,i) => {
+    const key = mpDateKey(date);
+    const dayData = mpWeekPlan[key]||{};
+    h += mpBuildDayCard(MP_DAYS[i], date, key, dayData);
+  });
+
+  h += `</div>`;
+
+  if (hasMeals) {
+    h += `<div class="mp-week-actions">
+      <button class="btn-secondary" id="mpMissingBtn" style="font-size:13px">🛒 View missing ingredients</button>
+    </div>`;
+  }
+
+  // Meals management section
+  h += `<div style="padding:0 12px 8px">
+    <div class="section-header" style="padding-left:0;padding-right:0;position:static">
+      <span class="section-icon">🍳</span>
+      <span class="section-title">My Meals</span>
+      <button class="btn-primary" id="mpAddMealBtn" style="font-size:12px;padding:6px 14px">+ Add meal</button>
+    </div>
+    <div id="mpMealLibList" style="display:flex;flex-direction:column;gap:6px;padding-bottom:20px"></div>
+  </div>`;
+
+  scroll.innerHTML = h;
+
+  // Events
+  document.getElementById('mpPrevWeek')?.addEventListener('click', async () => {
+    mpWeekStart.setDate(mpWeekStart.getDate()-7);
+    await mpLoadWeekPlan(); mpRenderWeek();
+  });
+  document.getElementById('mpNextWeek')?.addEventListener('click', async () => {
+    mpWeekStart.setDate(mpWeekStart.getDate()+7);
+    await mpLoadWeekPlan(); mpRenderWeek();
+  });
+  document.getElementById('mpMissingBtn')?.addEventListener('click', mpShowMissing);
+  document.getElementById('mpAddMealBtn')?.addEventListener('click', () => mpOpenMealModal(null));
+
+  scroll.querySelectorAll('.mp-plan-btn[data-daykey]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.daykey;
+      const dayName = btn.dataset.dayname;
+      const date = new Date(key + 'T00:00:00');
+      mpOpenDayModal(dayName, date, key);
+    });
+  });
+
+  mpRenderMealLib();
+}
+
+function mpBuildDayCard(dayName, date, key, dayData) {
+  const lunch = dayData.lunch||{};
+  const dinner = dayData.dinner||{};
+  return `<div class="mp-day-card">
+    <div class="mp-day-header">
+      <div>
+        <div class="mp-day-name">${dayName}</div>
+        <div class="mp-day-date">${mpFormatDayDate(date)}</div>
+      </div>
+      <button class="mp-plan-btn" data-daykey="${key}" data-dayname="${dayName}">Plan day</button>
+    </div>
+    <div class="mp-slots">
+      ${mpBuildSlotHtml('Lunch', lunch)}
+      ${mpBuildSlotHtml('Dinner', dinner)}
+    </div>
+  </div>`;
+}
+
+function mpBuildSlotHtml(label, slot) {
+  if (slot.skip) return `<div class="mp-slot"><span class="mp-slot-label">${label}</span><span class="mp-slot-skip">— not needed</span></div>`;
+  if (!slot.mealId) return `<div class="mp-slot"><span class="mp-slot-label">${label}</span><span class="mp-slot-empty">Not planned</span></div>`;
+  const meal = mpMeals.find(m=>m.id===slot.mealId);
+  if (!meal) return `<div class="mp-slot"><span class="mp-slot-label">${label}</span><span class="mp-slot-empty">Meal removed</span></div>`;
+  const si = mpCheckStock(meal);
+  const stockBadge = items.length ? `<span class="mp-stock-badge ${si.level}">${si.label}</span>` : '';
+  const timePart = meal.cookTime ? `<span class="mp-time-tag">${meal.cookTime}m</span>` : '';
+  return `<div class="mp-slot">
+    <span class="mp-slot-label">${label}</span>
+    <div class="mp-slot-content">
+      <div class="mp-slot-meal">${esc(meal.name)}</div>
+      <div class="mp-slot-meta"><span class="mp-effort-dot ${meal.effort}"></span>${timePart}${stockBadge}</div>
+    </div>
+  </div>`;
+}
+
+// ── RENDER MEAL LIBRARY ──────────────────────────────────
+function mpRenderMealLib(filter='') {
+  const list = document.getElementById('mpMealLibList');
+  if (!list) return;
+  const filtered = mpMeals.filter(m => !filter || m.name.toLowerCase().includes(filter.toLowerCase()));
+  if (!filtered.length) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">🍳</div><p>${filter?'No matches':'No meals yet — add your first!'}</p></div>`;
+    return;
+  }
+  list.innerHTML = filtered.map(meal => {
+    const slotLabel = (meal.slots||['lunch','dinner']).join(', ');
+    return `<div class="meal-card-edit" data-mealid="${meal.id}">
+      <div class="meal-card-info">
+        <div class="meal-card-name">${esc(meal.name)}</div>
+        <div class="meal-card-meta">
+          <span class="mp-effort-pill ${meal.effort}">${meal.effort}</span>
+          ${meal.cookTime?`<span class="meal-card-time">${meal.cookTime} min</span>`:''}
+        </div>
+        <div class="meal-card-slots">${slotLabel}</div>
+      </div>
+      <span style="color:var(--text3)">›</span>
+    </div>`;
+  }).join('');
+  list.querySelectorAll('.meal-card-edit[data-mealid]').forEach(card => {
+    card.addEventListener('click', () => {
+      const meal = mpMeals.find(m=>m.id===card.dataset.mealid);
+      if (meal) mpOpenMealModal(meal);
+    });
+  });
+}
+
+// ── DAY MODAL ────────────────────────────────────────────
+function mpOpenDayModal(dayName, date, key) {
+  const dayData = mpWeekPlan[key]||{};
+  mpDayModalState = {
+    key,
+    lunch: {...(dayData.lunch||{})},
+    dinner: {...(dayData.dinner||{})}
+  };
+  document.getElementById('mpDayModalTitle').textContent = dayName;
+  mpRenderDayModalBody();
+  document.getElementById('mpDayModal').classList.add('open');
+}
+
+function mpRenderDayModalBody() {
+  const body = document.getElementById('mpDayModalBody');
+  body.innerHTML = '';
+
+  // LUNCH
+  body.appendChild(mpBuildSlotSection('lunch','Lunch',[
+    {key:'home',label:'Are you home for lunch?',options:['Yes','No']},
+    {key:'effort',label:'How much effort?',options:['Quick & easy','Proper sit-down']}
+  ]));
+
+  // DINNER
+  body.appendChild(mpBuildSlotSection('dinner','Dinner',[
+    {key:'in',label:'Are you in for dinner?',options:['Yes','No']},
+    {key:'energy',label:'Energy level?',options:['Exhausted','Tired','Normal','Energetic']},
+    {key:'time',label:'Time to cook?',options:['< 15 min','< 30 min','< 60 min','1 hr+']},
+    {key:'craving',label:'Any cravings?',options:['No preference','Comfort food','Light meal','Something hearty','Quick snack']}
+  ]));
+}
+
+function mpBuildSlotSection(slot, title, questions) {
+  const section = document.createElement('div');
+  section.className = 'mp-day-section';
+  const state = mpDayModalState[slot];
+  const skipKey = slot === 'lunch' ? 'home' : 'in';
+  const isSkipped = state[skipKey] === 'No';
+
+  const heading = document.createElement('div');
+  heading.className = 'mp-section-title';
+  heading.textContent = title;
+  section.appendChild(heading);
+
+  for (const q of questions) {
+    const qDiv = document.createElement('div');
+    qDiv.className = 'mp-question';
+    const lbl = document.createElement('div');
+    lbl.className = 'mp-question-label';
+    lbl.textContent = q.label;
+    qDiv.appendChild(lbl);
+    const pills = document.createElement('div');
+    pills.className = 'mp-pills';
+    q.options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'mp-pill' + (state[q.key]===opt ? ' selected' : '');
+      btn.textContent = opt;
+      btn.addEventListener('click', () => {
+        state[q.key] = opt;
+        if (q.key === skipKey && opt === 'No') { state.skip = true; state.mealId = null; }
+        else if (q.key === skipKey && opt === 'Yes') { state.skip = false; }
+        mpRenderDayModalBody();
+      });
+      pills.appendChild(btn);
+    });
+    qDiv.appendChild(pills);
+    section.appendChild(qDiv);
+    if (q.key === skipKey && isSkipped) break;
+  }
+
+  if (!isSkipped) {
+    const mealRow = document.createElement('div');
+    const mealLbl = document.createElement('div');
+    mealLbl.className = 'mp-question-label';
+    mealLbl.textContent = 'Meal';
+    mealRow.appendChild(mealLbl);
+
+    if (state.mealId) {
+      const meal = mpMeals.find(m=>m.id===state.mealId);
+      if (meal) {
+        const si = mpCheckStock(meal);
+        const stockBadge = items.length ? `<span class="mp-stock-badge ${si.level}">${si.label}</span>` : '';
+        const card = document.createElement('div');
+        card.className = 'mp-suggested-card';
+        card.innerHTML = `<div class="mp-suggested-info">
+          <div class="mp-suggested-name">${esc(meal.name)}</div>
+          <div class="mp-slot-meta" style="margin-top:4px">
+            <span class="mp-effort-dot ${meal.effort}"></span>
+            ${meal.cookTime?`<span class="mp-time-tag">${meal.cookTime}m`:''}${stockBadge}
+          </div></div>
+          <button class="mp-change-btn">Change</button>`;
+        card.querySelector('.mp-change-btn').addEventListener('click', () => {
+          mpOpenPicker(slot, m => { state.mealId = m.id; mpRenderDayModalBody(); });
+        });
+        mealRow.appendChild(card);
+      }
+    } else {
+      const suggestions = mpGetSuggestions(slot, state);
+      if (suggestions.length) {
+        const sugBtn = document.createElement('button');
+        sugBtn.className = 'mp-suggest-btn';
+        sugBtn.textContent = `✨ Suggest a meal (${suggestions.length} match${suggestions.length===1?'':'es'})`;
+        sugBtn.addEventListener('click', () => { state.mealId = suggestions[0].id; mpRenderDayModalBody(); });
+        mealRow.appendChild(sugBtn);
+        const manBtn = document.createElement('button');
+        manBtn.className = 'mp-manual-btn';
+        manBtn.textContent = 'Or choose manually';
+        manBtn.addEventListener('click', () => { mpOpenPicker(slot, m => { state.mealId = m.id; mpRenderDayModalBody(); }); });
+        mealRow.appendChild(manBtn);
+      } else {
+        const btn = document.createElement('button');
+        btn.className = 'mp-suggest-btn';
+        btn.textContent = 'Choose a meal';
+        btn.addEventListener('click', () => { mpOpenPicker(slot, m => { state.mealId = m.id; mpRenderDayModalBody(); }); });
+        mealRow.appendChild(btn);
+      }
+    }
+    section.appendChild(mealRow);
+  }
+  return section;
+}
+
+// ── SUGGESTIONS ──────────────────────────────────────────
+function mpGetSuggestions(slot, state) {
+  let c = mpMeals.filter(m=>(m.slots||['lunch','dinner']).includes(slot));
+  if (slot==='dinner') {
+    const eMap = {Exhausted:['easy'],Tired:['easy','medium'],Normal:['easy','medium','hard'],Energetic:['easy','medium','hard']};
+    if (state.energy && eMap[state.energy]) c = c.filter(m=>eMap[state.energy].includes(m.effort));
+    const tMap = {'< 15 min':15,'< 30 min':30,'< 60 min':60,'1 hr+':Infinity};
+    if (state.time && tMap[state.time] !== Infinity) c = c.filter(m=>!m.cookTime||m.cookTime<=tMap[state.time]);
+    if (state.craving==='Light meal') c = c.filter(m=>m.effort==='easy');
+    if (state.craving==='Quick snack') c = c.filter(m=>!m.cookTime||m.cookTime<=10);
+  }
+  if (slot==='lunch' && state.effort==='Quick & easy') c = c.filter(m=>m.effort==='easy');
+  c.sort((a,b)=>{
+    const as = mpCheckStock(a).level==='full'?0:1;
+    const bs = mpCheckStock(b).level==='full'?0:1;
+    if (as!==bs) return as-bs;
+    const eo={easy:0,medium:1,hard:2};
+    return (eo[a.effort]||0)-(eo[b.effort]||0);
+  });
+  return c;
+}
+
+// Day modal save/cancel
+document.getElementById('mpDayModalSave').addEventListener('click', async () => {
+  mpWeekPlan[mpDayModalState.key] = {lunch:mpDayModalState.lunch, dinner:mpDayModalState.dinner};
+  await mpSaveWeekPlan();
+  document.getElementById('mpDayModal').classList.remove('open');
+  mpRenderWeek();
+  toast('Day saved ✓');
+});
+document.getElementById('mpDayModalCancel').addEventListener('click', () => document.getElementById('mpDayModal').classList.remove('open'));
+document.getElementById('mpDayModal').addEventListener('click', e => { if(e.target===e.currentTarget) e.currentTarget.classList.remove('open'); });
+
+// ── PICKER MODAL ─────────────────────────────────────────
+function mpOpenPicker(slot, callback) {
+  mpPickerCallback = callback;
+  document.getElementById('mpPickerTitle').textContent = `Choose a ${slot} meal`;
+  document.getElementById('mpPickerSearch').value = '';
+  mpRenderPickerList(slot, '');
+  document.getElementById('mpPickerModal').classList.add('open');
+}
+
+function mpRenderPickerList(slot, filter) {
+  const list = document.getElementById('mpPickerList');
+  const filtered = mpMeals.filter(m => {
+    const slots = m.slots||['lunch','dinner'];
+    return slots.includes(slot) && (!filter||m.name.toLowerCase().includes(filter.toLowerCase()));
+  });
+  if (!filtered.length) { list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px">No meals found</div>'; return; }
+  list.innerHTML = filtered.map(meal => {
+    const si = mpCheckStock(meal);
+    const stockBadge = items.length ? `<span class="mp-stock-badge ${si.level}" style="margin-left:auto">${si.label}</span>` : '';
+    return `<div class="ml-item" data-mid="${meal.id}">
+      <div class="ml-item-name">${esc(meal.name)}</div>
+      <span class="mp-effort-pill ${meal.effort}">${meal.effort}</span>
+      ${meal.cookTime?`<span class="mp-time-tag">${meal.cookTime}m</span>`:''}
+      ${stockBadge}
+    </div>`;
+  }).join('');
+  list.querySelectorAll('.ml-item[data-mid]').forEach(item => {
+    item.addEventListener('click', () => {
+      const meal = mpMeals.find(m=>m.id===item.dataset.mid);
+      if (meal && mpPickerCallback) mpPickerCallback(meal);
+      document.getElementById('mpPickerModal').classList.remove('open');
+    });
+  });
+}
+
+document.getElementById('mpPickerSearch').addEventListener('input', e => {
+  const slot = document.getElementById('mpPickerTitle').textContent.replace('Choose a ','').replace(' meal','');
+  mpRenderPickerList(slot, e.target.value);
+});
+document.getElementById('mpPickerCancel').addEventListener('click', () => document.getElementById('mpPickerModal').classList.remove('open'));
+document.getElementById('mpPickerModal').addEventListener('click', e => { if(e.target===e.currentTarget) e.currentTarget.classList.remove('open'); });
+
+// ── ADD/EDIT MEAL MODAL ──────────────────────────────────
+function mpOpenMealModal(meal) {
+  mpEditMealId = meal ? meal.id : null;
+  document.getElementById('mpMealModalTitle').textContent = meal ? 'Edit Meal' : 'Add Meal';
+  document.getElementById('mpMealName').value = meal?.name||'';
+  document.getElementById('mpMealEffort').value = meal?.effort||'easy';
+  document.getElementById('mpMealTime').value = meal?.cookTime||'';
+  document.getElementById('mpMealIngredients').value = (meal?.ingredients||[]).join('\n');
+  document.getElementById('mpMealNotes').value = meal?.notes||'';
+  const slots = meal?.slots||['lunch','dinner'];
+  document.getElementById('mpSlotLunch').checked = slots.includes('lunch');
+  document.getElementById('mpSlotDinner').checked = slots.includes('dinner');
+  document.getElementById('mpMealDelete').style.display = meal ? 'inline-flex' : 'none';
+  document.getElementById('mpMealModal').classList.add('open');
+}
+
+document.getElementById('mpMealSave').addEventListener('click', async () => {
+  const name = document.getElementById('mpMealName').value.trim();
+  if (!name) { toast('Please enter a meal name'); return; }
+  const slots = [];
+  if (document.getElementById('mpSlotLunch').checked) slots.push('lunch');
+  if (document.getElementById('mpSlotDinner').checked) slots.push('dinner');
+  if (!slots.length) { toast('Please select at least one slot'); return; }
+  const ingredients = document.getElementById('mpMealIngredients').value
+    .split('\n').map(s=>s.trim()).filter(Boolean);
+  const mealData = {
+    name, effort: document.getElementById('mpMealEffort').value,
+    cookTime: parseInt(document.getElementById('mpMealTime').value)||null,
+    ingredients, notes: document.getElementById('mpMealNotes').value.trim(),
+    slots, updatedAt: serverTimestamp()
+  };
+  const id = mpEditMealId || ('meal_'+Date.now()+Math.random().toString(36).slice(2,5));
+  await setDoc(doc(mpMealsCol(), id), mealData);
+  document.getElementById('mpMealModal').classList.remove('open');
+  await mpLoadMeals();
+  mpRenderWeek();
+  toast(mpEditMealId ? 'Meal updated ✓' : 'Meal added ✓');
+});
+
+document.getElementById('mpMealDelete').addEventListener('click', () => {
+  if (!mpEditMealId) return;
+  confirm('Delete meal', 'Remove this meal from your library?', async () => {
+    await deleteDoc(doc(mpMealsCol(), mpEditMealId));
+    document.getElementById('mpMealModal').classList.remove('open');
+    await mpLoadMeals();
+    mpRenderWeek();
+    toast('Meal deleted');
+  });
+});
+
+document.getElementById('mpMealModalCancel').addEventListener('click', () => document.getElementById('mpMealModal').classList.remove('open'));
+document.getElementById('mpMealModal').addEventListener('click', e => { if(e.target===e.currentTarget) e.currentTarget.classList.remove('open'); });
+
+// ── MISSING INGREDIENTS ──────────────────────────────────
+function mpShowMissing() {
+  const missing = {};
+  Object.values(mpWeekPlan).forEach(dayData => {
+    ['lunch','dinner'].forEach(slot => {
+      const s = dayData[slot];
+      if (!s?.mealId) return;
+      const meal = mpMeals.find(m=>m.id===s.mealId);
+      if (!meal) return;
+      const miss = mpGetMissing(meal);
+      if (miss.length) {
+        if (!missing[meal.name]) missing[meal.name] = new Set();
+        miss.forEach(i=>missing[meal.name].add(i));
+      }
+    });
+  });
+  const container = document.getElementById('mpMissingList');
+  if (!Object.keys(missing).length) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">✅</div><p>You have everything in stock!</p></div>`;
+  } else {
+    container.innerHTML = Object.entries(missing).map(([name, ings]) =>
+      `<div class="missing-meal-group">
+        <div class="missing-meal-label">${esc(name)}</div>
+        ${[...ings].map(i=>`<div class="missing-ing-item">${esc(i)}</div>`).join('')}
+      </div>`
+    ).join('');
+  }
+  document.getElementById('mpMissingModal').classList.add('open');
+}
+
+document.getElementById('mpMissingClose').addEventListener('click', () => document.getElementById('mpMissingModal').classList.remove('open'));
+document.getElementById('mpMissingModal').addEventListener('click', e => { if(e.target===e.currentTarget) e.currentTarget.classList.remove('open'); });
+
+// ═══════════════════════════════════════════════════════════
+// HISTORY IN SETTINGS
+// ═══════════════════════════════════════════════════════════
+
+function renderSettingsHistory() {
+  const card = document.getElementById('settingsHistoryCard');
+  if (!card) return;
+  const keys = Object.keys(days)
+    .filter(k=>days[k]?.needed?.length>0||days[k]?.bought?.length>0)
+    .sort((a,b)=>b.localeCompare(a))
+    .slice(0,4); // show 4 most recent
+  if (!keys.length) {
+    card.innerHTML = '<div style="padding:14px 16px;font-size:13px;color:var(--text3)">No history yet</div>';
+    return;
+  }
+  card.innerHTML = keys.map(key => {
+    const d = days[key];
+    const {weekday,full} = keyDisplay(key);
+    const needed = (d.needed||[]).length;
+    const bought = (d.bought||[]).filter(id=>d.needed?.includes(id)).length;
+    return `<div class="settings-history-item" data-hkey="${key}">
+      <div>
+        <div class="sh-week">${weekday}${key===todayKey()?' (today)':''}</div>
+        <div class="sh-count">${full} · ${needed} needed · ${bought} bought</div>
+      </div>
+      <span class="sh-arrow">›</span>
+    </div>`;
+  }).join('');
+}
+
+function renderHistoryFullModal() {
+  const list = document.getElementById('historyFullList');
+  const keys = Object.keys(days)
+    .filter(k=>days[k]?.needed?.length>0||days[k]?.bought?.length>0)
+    .sort((a,b)=>b.localeCompare(a));
+  if (!keys.length) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">📅</div><p>No history yet</p></div>`;
+    return;
+  }
+  let h = '';
+  keys.forEach(key=>{
+    const d=days[key];
+    const{weekday,full}=keyDisplay(key);
+    const needed=(d.needed||[]).map(id=>items.find(i=>i.id===id)?.name).filter(Boolean);
+    const bought=new Set(d.bought||[]);
+    h+=`<div class="history-card">
+      <div class="history-header">
+        <div class="history-title">${weekday}${key===todayKey()?' (today)':''}</div>
+        <div class="history-meta">${full}<br>${needed.length} needed · ${[...bought].filter(id=>d.needed?.includes(id)).length} bought</div>
+      </div>
+      <div class="history-body">
+        ${!needed.length?'<div style="font-size:13px;color:var(--text3)">Nothing marked</div>':
+          needed.map(n=>`<div class="history-item">${esc(n)} ${bought.has((days[key].needed||[]).find(id=>items.find(i=>i.id===id)?.name===n))?'<span style="color:var(--green);font-weight:700">✓</span>':''}</div>`).join('')}
+      </div>
+    </div>`;
+  });
+  list.innerHTML = h;
+}
+
+document.getElementById('viewAllHistoryBtn')?.addEventListener('click', () => {
+  renderHistoryFullModal();
+  document.getElementById('historyFullModal').classList.add('open');
+});
+document.getElementById('historyFullClose')?.addEventListener('click', () => document.getElementById('historyFullModal').classList.remove('open'));
+document.getElementById('historyFullModal')?.addEventListener('click', e => { if(e.target===e.currentTarget) e.currentTarget.classList.remove('open'); });
+
 
 // Apply saved theme immediately on load
 applyTheme(currentTheme);

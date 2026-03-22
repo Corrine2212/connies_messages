@@ -1,7 +1,7 @@
 {
-  "name": "Connie's Messages",
+  "name": "Connie's",
   "short_name": "Connie's",
-  "description": "Personal stock checker and shopping list",
+  "description": "Pantry, shopping and meal planner",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#fdf6ec",
