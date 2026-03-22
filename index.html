@@ -536,6 +536,22 @@
   /* ═══════════════════════════════════════════
      TOAST
   ═══════════════════════════════════════════ */
+  /* Carry forward picker */
+  .carry-day-list { display: flex; flex-direction: column; gap: 8px; padding: 4px 0 8px; }
+  .carry-day-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border); background: var(--surface);
+    cursor: pointer; transition: all .18s; gap: 12px;
+  }
+  .carry-day-row:active { background: var(--accent-bg); border-color: var(--accent-bd); }
+  .carry-day-info { flex: 1; min-width: 0; }
+  .carry-day-name { font-size: 14px; font-weight: 600; color: var(--text); }
+  .carry-day-date { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .carry-day-items { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .carry-day-item { font-size: 11px; background: var(--bg2); color: var(--text2); padding: 2px 8px; border-radius: 20px; }
+  .carry-day-count { font-size: 12px; font-weight: 700; color: var(--accent); background: var(--accent-bg); padding: 3px 10px; border-radius: 20px; flex-shrink: 0; }
+
   .toast { position: fixed; bottom: calc(62px + max(env(safe-area-inset-bottom), 16px) + 12px); left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--bg); padding: 10px 20px; border-radius: 50px; font-size: 13px; font-weight: 500; z-index: 200; opacity: 0; transition: transform .3s, opacity .3s; white-space: nowrap; max-width: calc(100vw - 32px); text-align: center; pointer-events: none; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
@@ -1052,6 +1068,20 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="carryModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Carry Forward</div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text2);margin:0 0 12px">Select a past day to carry its unbought items to today.</p>
+      <div class="carry-day-list" id="carryDayList"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="carryModalCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <!-- FIREBASE -->
@@ -1361,20 +1391,63 @@ function getUnboughtFromPastDays() {
   return unbought;
 }
 
-async function carryForward() {
-  const unbought = getUnboughtFromPastDays();
-  if (!unbought.size) { toast('No unbought items found in past days 🎉'); return; }
-
+function openCarryPicker() {
+  const tk = todayKey();
   const today = ensureDay(viewDate);
   const existing = new Set(today.needed);
-  const toAdd = [...unbought].filter(id => !existing.has(id) && items.find(i=>i.id===id));
-  if (!toAdd.length) { toast('All past unbought items already on today\'s list'); return; }
 
-  today.needed = [...today.needed, ...toAdd];
-  await saveDay(viewDate);
-  renderFilters(); renderStock();
-  toast(`Carried forward ${toAdd.length} item${toAdd.length!==1?'s':''} from past days ↓`);
+  // Build list of past days with unbought items
+  const pastDays = [];
+  for (let i = 1; i <= 30; i++) {
+    const k = offsetKey(tk, -i);
+    const d = days[k];
+    if (!d || !d.needed || !d.needed.length) continue;
+    const unbought = d.needed.filter(id => !d.bought?.includes(id) && items.find(i=>i.id===id));
+    if (!unbought.length) continue;
+    pastDays.push({ key: k, unbought });
+  }
+
+  if (!pastDays.length) { toast('No unbought items found in past days 🎉'); return; }
+
+  const { weekday, full } = keyDisplay; // unused, we call per-day below
+  const listEl = document.getElementById('carryDayList');
+  listEl.innerHTML = pastDays.map(({ key, unbought }) => {
+    const { weekday, full } = keyDisplay(key);
+    const newCount = unbought.filter(id => !existing.has(id)).length;
+    const itemNames = unbought.map(id => items.find(i=>i.id===id)?.name).filter(Boolean);
+    const preview = itemNames.slice(0, 4).map(n => `<span class="carry-day-item">${esc(n)}</span>`).join('');
+    const more = itemNames.length > 4 ? `<span class="carry-day-item">+${itemNames.length-4} more</span>` : '';
+    return `<div class="carry-day-row" data-key="${key}">
+      <div class="carry-day-info">
+        <div class="carry-day-name">${weekday}</div>
+        <div class="carry-day-date">${full}</div>
+        <div class="carry-day-items">${preview}${more}</div>
+      </div>
+      <div class="carry-day-count">${newCount} new</div>
+    </div>`;
+  }).join('');
+
+  listEl.querySelectorAll('.carry-day-row').forEach(row => {
+    row.addEventListener('click', async () => {
+      const key = row.dataset.key;
+      const d = days[key];
+      const unbought = d.needed.filter(id => !d.bought?.includes(id) && items.find(i=>i.id===id));
+      const toAdd = unbought.filter(id => !existing.has(id));
+      if (!toAdd.length) { toast('All already on today\'s list'); return; }
+      const today = ensureDay(viewDate);
+      today.needed = [...today.needed, ...toAdd];
+      await saveDay(viewDate);
+      renderFilters(); renderStock();
+      document.getElementById('carryModal').classList.remove('open');
+      toast(`Carried forward ${toAdd.length} item${toAdd.length!==1?'s':''} ↓`);
+    });
+  });
+
+  document.getElementById('carryModal').classList.add('open');
 }
+
+// keep carryForward as alias so carry-badge tap still works
+function carryForward() { openCarryPicker(); }
 
 // ── DATE HEADER ───────────────────────────────────────────────────────
 function renderDateHeader() {
@@ -1872,7 +1945,9 @@ document.getElementById('resetDayRow').addEventListener('click',()=>{
     await saveDay(viewDate);toast('Day reset ✓');
   });
 });
-document.getElementById('carryForwardRow').addEventListener('click', carryForward);
+document.getElementById('carryForwardRow').addEventListener('click', openCarryPicker);
+document.getElementById('carryModalCancel').addEventListener('click', () => document.getElementById('carryModal').classList.remove('open'));
+document.getElementById('carryModal').addEventListener('click', e => { if(e.target===e.currentTarget) e.currentTarget.classList.remove('open'); });
 
 // Carry forward badge click
 document.getElementById('dateMain').addEventListener('click', e => {
