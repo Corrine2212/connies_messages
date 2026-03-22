@@ -250,7 +250,7 @@
     box-shadow: var(--shadow);
     transition: background .3s;
   }
-  .header-top { display: flex; align-items: center; justify-content: space-between; padding: 14px 0 14px; gap: 12px; }
+  .header-top { display: flex; align-items: center; justify-content: space-between; padding: 14px 0 4px; gap: 12px; }
   .header-logo { display: flex; align-items: center; gap: 10px; }
   .logo-icon { width: 34px; height: 34px; flex-shrink: 0; }
   .app-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; letter-spacing: .2px; line-height: 1.1; }
@@ -404,7 +404,7 @@
     border: 2px solid var(--border); background: var(--surface);
     display: flex; align-items: center; justify-content: center; font-size: 9px;
     transition: all .2s; cursor: pointer;
-    padding: 8px; box-sizing: content-box;
+    padding: 8px; margin: -8px; box-sizing: content-box;
   }
   .status-dot:active { transform: scale(.88); }
   .item-card.needed .status-dot { background: var(--accent); border-color: var(--accent); color: #fff; }
@@ -1339,17 +1339,26 @@ async function deleteItem(id) {
 
 // ── CARRY FORWARD ────────────────────────────────────────────────────
 function getUnboughtFromPastDays() {
-  // Find the most recent past day that has needed items, use only that day
+  // Walk back through past days accumulating unbought items.
+  // Stop as soon as we hit a day where everything was bought — that's a
+  // "clean shop" and anything before it has been dealt with.
+  // Days with no list at all (no needed items) are skipped over transparently.
+  // Example: Sunday 15 unbought, Monday 2 unbought (new additions) →
+  //   returns all 17 distinct unbought items.
+  // Example: Sunday 15 unbought, Monday 2 needed all bought →
+  //   Monday is a clean stop, returns only Sunday's 15.
   const tk = todayKey();
+  const unbought = new Set();
   for (let i = 1; i <= 30; i++) {
     const k = offsetKey(tk, -i);
     const d = days[k];
-    if (!d || !d.needed || !d.needed.length) continue;
-    // Found the most recent past day with items — return its unbought ones
-    const unbought = new Set(d.needed.filter(id => !d.bought?.includes(id)));
-    return unbought;
+    if (!d || !d.needed || !d.needed.length) continue; // no list, skip
+    const dayUnbought = d.needed.filter(id => !d.bought?.includes(id));
+    if (dayUnbought.length === 0) break; // clean shop — stop here
+    dayUnbought.forEach(id => unbought.add(id));
+    // keep walking back — there may be older unbought items too
   }
-  return new Set();
+  return unbought;
 }
 
 async function carryForward() {
@@ -1521,12 +1530,29 @@ async function toggleNeeded(id) {
   const day = ensureDay(viewDate);
   const neededSet = new Set(day.needed||[]);
   const boughtSet = new Set(day.bought||[]);
-  if(boughtSet.has(id)){boughtSet.delete(id);toast('Unmarked as bought');}
-  else if(neededSet.has(id)){neededSet.delete(id);boughtSet.delete(id);toast('Removed from list');}
-  else{neededSet.add(id);toast('Added to shopping list 🛒');}
-  day.needed=[...neededSet]; day.bought=[...boughtSet];
+  const autoInc  = new Set(day.autoIncremented||[]);
+
+  if (boughtSet.has(id)) {
+    // Unticking bought → decrement qty if we incremented it today
+    boughtSet.delete(id);
+    if (autoInc.has(id)) {
+      const it = items.find(i=>i.id===id);
+      if (it) { it.qty = Math.max(0, (it.qty||0) - 1); await saveItem(it); }
+      autoInc.delete(id);
+    }
+    toast('Unmarked as bought');
+  } else if (neededSet.has(id)) {
+    neededSet.delete(id); boughtSet.delete(id); autoInc.delete(id);
+    toast('Removed from list');
+  } else {
+    neededSet.add(id);
+    toast('Added to shopping list 🛒');
+  }
+
+  day.needed = [...neededSet]; day.bought = [...boughtSet];
+  day.autoIncremented = [...autoInc];
   renderFilters(); renderStock();
-  if(activeTab==='shop') renderShop();
+  if (activeTab==='shop') renderShop();
   await saveDay(viewDate);
 }
 
@@ -1583,9 +1609,27 @@ function renderShop() {
 async function toggleBought(id) {
   const day = ensureDay(viewDate);
   const boughtSet = new Set(day.bought||[]);
-  boughtSet.has(id)?boughtSet.delete(id):boughtSet.add(id);
-  day.bought=[...boughtSet];
-  renderShop(); renderFilters();
+  const autoInc  = new Set(day.autoIncremented||[]);
+
+  if (boughtSet.has(id)) {
+    // Unticking — decrement qty if we incremented it today
+    boughtSet.delete(id);
+    if (autoInc.has(id)) {
+      const it = items.find(i=>i.id===id);
+      if (it) { it.qty = Math.max(0, (it.qty||0) - 1); await saveItem(it); }
+      autoInc.delete(id);
+    }
+  } else {
+    // Ticking as bought — increment qty
+    boughtSet.add(id);
+    const it = items.find(i=>i.id===id);
+    if (it) { it.qty = (it.qty||0) + 1; await saveItem(it); }
+    autoInc.add(id);
+  }
+
+  day.bought = [...boughtSet];
+  day.autoIncremented = [...autoInc];
+  renderShop(); renderFilters(); renderStock();
   await saveDay(viewDate);
 }
 
