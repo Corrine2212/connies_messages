@@ -506,6 +506,7 @@
      MODAL
   ═══════════════════════════════════════════ */
   .modal-overlay { position: fixed; inset: 0; background: rgba(20,10,0,.5); z-index: 100; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .25s; }
+  #confirmModal { z-index: 200; }
   .modal-overlay.open { opacity: 1; pointer-events: all; }
   .modal { background: var(--bg); width: 100%; max-width: 540px; border-radius: 22px 22px 0 0; padding: 0 0 max(28px, env(safe-area-inset-bottom, 28px)); max-height: 90vh; overflow-y: auto; transform: translateY(40px); transition: transform .28s cubic-bezier(.4,0,.2,1), background .3s; }
   .modal-overlay.open .modal { transform: translateY(0); }
@@ -900,6 +901,15 @@
     background: var(--bg2); border-radius: 8px; margin-bottom: 4px; font-size: 13px; color: var(--text); }
   .missing-ing-item::before { content: ''; width: 6px; height: 6px; border-radius: 50%;
     background: var(--accent); flex-shrink: 0; }
+
+  .mp-slot-toggle {
+    padding: 7px 18px; border-radius: 20px; font-size: 13px; font-weight: 600;
+    font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .18s;
+    border: 1.5px solid var(--border); background: var(--surface); color: var(--text2);
+  }
+  .mp-slot-toggle.active {
+    background: var(--accent-bg); border-color: var(--accent-bd); color: var(--accent);
+  }
   </style>
 </head>
 <body>
@@ -1285,13 +1295,9 @@
       </div>
       <div class="form-field">
         <label>Suitable for</label>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
-          <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text2);cursor:pointer">
-            <input type="checkbox" id="mpSlotLunch" value="lunch" style="accent-color:var(--accent)"/> Lunch
-          </label>
-          <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text2);cursor:pointer">
-            <input type="checkbox" id="mpSlotDinner" value="dinner" style="accent-color:var(--accent)"/> Dinner
-          </label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+          <button type="button" id="mpSlotLunch" class="mp-slot-toggle" data-slot="lunch">🥗 Lunch</button>
+          <button type="button" id="mpSlotDinner" class="mp-slot-toggle" data-slot="dinner">🍽️ Dinner</button>
         </div>
       </div>
       <div class="form-field">
@@ -2850,8 +2856,8 @@ function mpOpenMealModal(meal) {
   document.getElementById('mpMealIngredients').value = (meal?.ingredients||[]).join('\n');
   document.getElementById('mpMealNotes').value = meal?.notes||'';
   const slots = meal?.slots||['lunch','dinner'];
-  document.getElementById('mpSlotLunch').checked = slots.includes('lunch');
-  document.getElementById('mpSlotDinner').checked = slots.includes('dinner');
+  document.getElementById('mpSlotLunch').classList.toggle('active', slots.includes('lunch'));
+  document.getElementById('mpSlotDinner').classList.toggle('active', slots.includes('dinner'));
   document.getElementById('mpMealDelete').style.display = meal ? 'inline-flex' : 'none';
   document.getElementById('mpMealModal').classList.add('open');
 }
@@ -2860,8 +2866,8 @@ document.getElementById('mpMealSave').addEventListener('click', async () => {
   const name = document.getElementById('mpMealName').value.trim();
   if (!name) { toast('Please enter a meal name'); return; }
   const slots = [];
-  if (document.getElementById('mpSlotLunch').checked) slots.push('lunch');
-  if (document.getElementById('mpSlotDinner').checked) slots.push('dinner');
+  if (document.getElementById('mpSlotLunch').classList.contains('active')) slots.push('lunch');
+  if (document.getElementById('mpSlotDinner').classList.contains('active')) slots.push('dinner');
   if (!slots.length) { toast('Please select at least one slot'); return; }
   const ingredients = document.getElementById('mpMealIngredients').value
     .split('\n').map(s=>s.trim()).filter(Boolean);
@@ -2892,6 +2898,8 @@ document.getElementById('mpMealDelete').addEventListener('click', () => {
 
 document.getElementById('mpMealModalCancel').addEventListener('click', () => document.getElementById('mpMealModal').classList.remove('open'));
 document.getElementById('mpMealModal').addEventListener('click', e => { if(e.target===e.currentTarget) e.currentTarget.classList.remove('open'); });
+document.getElementById('mpSlotLunch').addEventListener('click', () => document.getElementById('mpSlotLunch').classList.toggle('active'));
+document.getElementById('mpSlotDinner').addEventListener('click', () => document.getElementById('mpSlotDinner').classList.toggle('active'));
 
 // ── MISSING INGREDIENTS ──────────────────────────────────
 function mpShowMissing() {
