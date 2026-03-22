@@ -2398,6 +2398,8 @@ let mpEditMealId = null;
 let mpPickerCallback = null;
 let mpDayModalState = {};
 const MP_DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+let mpUnsubMeals = null;    // real-time listener for meal library
+let mpUnsubWeek = null;     // real-time listener for current week plan
 
 // Firestore paths
 const mpMealsCol = () => collection(db, 'users', uid, 'meals');
@@ -2426,19 +2428,25 @@ function mpIsCurrentWeek(ws) { return mpDateKey(ws) === mpDateKey(mpGetWeekStart
 function mpIsPastWeek(ws) { return ws < mpGetWeekStart(new Date()); }
 
 // ── LOAD / SAVE ──────────────────────────────────────────
-async function mpLoadMeals() {
-  mpMeals = [];
-  const snap = await getDocs(mpMealsCol());
-  snap.forEach(d => mpMeals.push({id:d.id,...d.data()}));
-  mpMeals.sort((a,b)=>a.name.localeCompare(b.name));
+
+// Subscribe to meal library — real-time, fires whenever any meal is added/edited/deleted
+function mpSubscribeMeals() {
+  if (mpUnsubMeals) mpUnsubMeals();
+  mpUnsubMeals = onSnapshot(mpMealsCol(), snap => {
+    mpMeals = snap.docs.map(d => ({id:d.id,...d.data()}));
+    mpMeals.sort((a,b)=>a.name.localeCompare(b.name));
+    if (activeTab === 'meals') mpRenderWeek();
+  }, e => console.warn('meals snapshot error', e));
 }
 
-async function mpLoadWeekPlan() {
-  mpWeekPlan = {};
-  try {
-    const snap = await getDoc(mpWeekDoc(mpWeekId(mpWeekStart)));
-    if (snap.exists()) mpWeekPlan = snap.data().days || {};
-  } catch(e) { console.warn('weekPlan load failed', e); }
+// Subscribe to the current week plan — swaps listener whenever week navigation changes
+function mpSubscribeWeekPlan() {
+  if (mpUnsubWeek) mpUnsubWeek();
+  const wid = mpWeekId(mpWeekStart);
+  mpUnsubWeek = onSnapshot(mpWeekDoc(wid), snap => {
+    mpWeekPlan = snap.exists() ? (snap.data().days || {}) : {};
+    if (activeTab === 'meals') mpRenderWeek();
+  }, e => console.warn('weekPlan snapshot error', e));
 }
 
 async function mpSaveWeekPlan() {
@@ -2447,9 +2455,9 @@ async function mpSaveWeekPlan() {
 }
 
 async function mpInit() {
-  await Promise.all([mpLoadMeals(), mpLoadWeekPlan()]);
   await mpSeedIfEmpty();
-  mpRenderWeek();
+  mpSubscribeMeals();
+  mpSubscribeWeekPlan();
 }
 
 // ── SEED EXAMPLE MEALS ───────────────────────────────────
@@ -2546,13 +2554,13 @@ function mpRenderWeek() {
   scroll.innerHTML = h;
 
   // Events
-  document.getElementById('mpPrevWeek')?.addEventListener('click', async () => {
+  document.getElementById('mpPrevWeek')?.addEventListener('click', () => {
     mpWeekStart.setDate(mpWeekStart.getDate()-7);
-    await mpLoadWeekPlan(); mpRenderWeek();
+    mpSubscribeWeekPlan();
   });
-  document.getElementById('mpNextWeek')?.addEventListener('click', async () => {
+  document.getElementById('mpNextWeek')?.addEventListener('click', () => {
     mpWeekStart.setDate(mpWeekStart.getDate()+7);
-    await mpLoadWeekPlan(); mpRenderWeek();
+    mpSubscribeWeekPlan();
   });
   document.getElementById('mpMissingBtn')?.addEventListener('click', mpShowMissing);
   document.getElementById('mpAddMealBtn')?.addEventListener('click', () => mpOpenMealModal(null));
